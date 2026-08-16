@@ -1,0 +1,1465 @@
+FINAL PROMPT 
+
+PROJECT NAME: AURAL  
+punchline-Hear Beyond
+Project Overview
+
+Create a fully responsive, premium-quality music streaming web application inspired by Spotify, but not a pixel-perfect copy. The application should feel modern, immersive, futuristic, and interactive, introducing AI-powered music discovery experiences that traditional streaming platforms don't have.
+
+The design language should combine the elegance of Spotify with Apple's minimalism and modern glassmorphism.
+
+The website should include smooth animations, beautiful gradients, AI interactions, dynamic themes, and engaging visualizations.
+
+Design Requirements
+Overall Theme
+Dark theme by default
+Glassmorphism cards
+Aurora gradients
+Soft neon glow
+Rounded corners (18–24px)
+Modern typography
+Smooth transitions
+Premium micro-interactions
+Interactive hover animations
+Framer Motion-like animations
+Floating blurred background blobs
+Dynamic gradients
+Pages
+
+Create the following pages:
+
+Landing Page
+Login
+Signup
+Home
+Search
+Library
+AI DJ
+Mood Discovery
+Music Globe
+Song Details
+Artist Profile
+Playlist
+Settings
+Profile
+Landing Page
+
+Include:
+
+Hero section
+
+Large headline
+
+Music that understands you.
+
+Subheading
+
+Discover songs through mood, colors, weather, AI conversations, and the world around you.
+
+Animated CTA
+
+Start Listening
+
+Background
+
+Floating music notes
+
+Aurora lights
+
+Gradient blobs
+
+Scrolling sections
+
+Feature cards
+
+Testimonials
+
+Footer
+
+Sidebar
+
+Spotify-like navigation
+
+Home
+Search
+Library
+AI DJ
+Mood Discovery
+Music Globe
+Weather Mix
+Roulette
+Travel Playlist
+Artist Tracker
+Settings
+
+Bottom:
+
+User profile
+
+Mini player
+
+Music Player
+
+Premium sticky bottom player.
+
+Include:
+
+Album art
+
+Song title
+
+Artist
+
+Progress bar
+
+Shuffle
+
+Repeat
+
+Volume
+
+Queue
+
+Lyrics button
+
+Story button
+
+Like button
+
+AI Explain button
+
+Animated equalizer
+
+Background color adapts to album artwork.
+
+Feature 1 — Mood Based Dynamic Player
+
+Instead of selecting songs first, users choose a mood.
+
+Create large animated mood cards.
+
+Examples
+
+🌧 Rainy & Cozy
+
+💔 Heartbroken
+
+💪 Gym Beast
+
+📚 Study Focus
+
+🌅 Sunrise Calm
+
+🚗 Late Night Drive
+
+✨ Party
+
+😌 Relax
+
+❤️ Romantic
+
+😤 Angry
+
+😴 Sleep
+
+😊 Happy
+
+Each mood should have
+
+unique gradient
+background animation
+ambient effects
+personalized recommendation engine
+
+Changing moods should instantly change:
+
+Entire UI color palette
+
+Background
+
+Music recommendations
+
+Playlist
+
+Mini animations
+
+Typography accents
+
+Player glow
+
+Feature 2 — Color to Music
+
+Interactive color picker.
+
+User clicks colors.
+
+Map colors to music styles.
+
+Examples
+
+Blue
+
+Lo-fi
+
+Jazz
+
+Ambient
+
+Ocean sounds
+
+Red
+
+Rock
+
+Metal
+
+Workout
+
+Purple
+
+Dream Pop
+
+Synthwave
+
+Indie
+
+Yellow
+
+Happy Pop
+
+Summer
+
+Dance
+
+Green
+
+Nature
+
+Acoustic
+
+Country
+
+Black
+
+Hip-Hop
+
+Trap
+
+Dark R&B
+
+White
+
+Classical
+
+Piano
+
+Meditation
+
+Display recommendations with animated transitions.
+
+Feature 3 — Interactive Music Globe
+
+Replace boring genre lists.
+
+Create an interactive rotating 3D globe.
+
+Technologies:
+
+Three.js
+
+React Three Fiber
+
+Features:
+
+Hover countries
+
+Click countries
+
+Zoom animation
+
+On click show
+
+Country image
+
+Top artists
+
+Trending songs
+
+Traditional music
+
+Popular playlists
+
+Regional genres
+
+Example
+
+Brazil
+
+Samba
+
+Bossa Nova
+
+Korea
+
+K-pop
+
+India
+
+Bollywood
+
+Punjabi
+
+Carnatic
+
+Japan
+
+City Pop
+
+Anime songs
+
+Jazz
+
+USA
+
+Hip Hop
+
+Country
+
+Rock
+
+UK
+
+Indie
+
+Pop
+
+Afrobeats
+
+Latin
+
+Middle East
+
+Etc.
+
+Display country statistics.
+
+Feature 4 — AI DJ
+
+A conversational AI assistant.
+
+Beautiful floating chat window.
+
+Examples
+
+"I just finished my exams."
+
+"Play relaxing indie music."
+
+"I want something like Arctic Monkeys but calmer."
+
+"I need coding music."
+
+The AI responds like a real DJ.
+
+Example
+
+"You've had a long day.
+
+Here's a playlist with mellow indie rock, dream pop, and relaxing alternative tracks."
+
+Generate queue.
+
+Explain every recommendation.
+
+Allow follow-up conversation.
+
+Feature 5 — Story Behind the Song
+
+Each song page includes
+
+Meaning
+
+Background
+
+Artist inspiration
+
+Production story
+
+Fun facts
+
+Lyrics explanation
+
+Timeline
+
+Genre evolution
+
+Influences
+
+Similar songs
+
+Interactive cards.
+
+Feature 6 — Weather Sync
+
+Automatically detect weather.
+
+Examples
+
+Rain
+
+Acoustic
+
+Lo-fi
+
+Coffeehouse
+
+Snow
+
+Piano
+
+Classical
+
+Jazz
+
+Sunny
+
+Summer Pop
+
+Dance
+
+Roadtrip
+
+Thunderstorm
+
+Alternative
+
+Indie
+
+Cloudy
+
+Dream Pop
+
+Fog
+
+Ambient
+
+Display animated weather backgrounds.
+
+Rain particles
+
+Snow
+
+Sun rays
+
+Clouds
+
+Lightning
+
+Feature 7 — Music Roulette
+
+Large glowing button
+
+🎲 Surprise Me
+
+Randomly generates
+
+Genre
+
+Country
+
+Language
+
+Mood
+
+Decade
+
+Artist
+
+Playlist
+
+Fun animation before revealing.
+
+Feature 8 — Artist Growth Tracker
+
+Users follow upcoming artists.
+
+Timeline view.
+
+Display
+
+Follower growth
+
+New songs
+
+Albums
+
+Concerts
+
+Milestones
+
+Awards
+
+Tour announcements
+
+Interactive charts.
+
+Feature 9 — Hum to Find Song
+
+Microphone button.
+
+User hums melody.
+
+Identify similar songs.
+
+Display confidence score.
+
+Possible matches.
+
+Waveform visualization.
+
+Feature 11 — Lyrics AI
+
+Song page.
+
+Display synchronized lyrics.
+
+Click any line.
+
+AI explains
+
+Meaning
+
+References
+
+Metaphors
+
+Emotion
+
+Story
+
+Background
+
+Feature 12 — Book & Movie Music
+
+Input
+
+Harry Potter
+
+Interstellar
+
+Dark
+
+Breaking Bad
+
+Dune
+
+The Alchemist
+
+The Hobbit
+
+Generate playlists matching the vibe.
+
+Explain choices.
+
+Feature 13 — AI Playlist Cover Generator
+
+Create playlist.
+
+Enter title
+
+Example
+
+Midnight Rain
+
+Generate multiple AI album cover concepts with different artistic styles (neon, watercolor, cyberpunk, minimal, vintage, etc.).
+
+Allow the user to choose one as the playlist artwork.
+
+Feature 14 — Travel Playlist
+
+User selects
+
+Road Trip
+
+Flight
+
+Train
+
+Camping
+
+Beach
+
+Mountains
+
+Night Drive
+
+Estimate travel duration.
+
+Generate playlist matching trip length.
+
+Include
+
+Energy curve
+
+Stops
+
+Mood changes
+
+Search
+
+Spotify-like search.
+
+Include
+
+Artists
+
+Songs
+
+Albums
+
+Genres
+
+Moods
+
+Countries
+
+Colors
+
+Weather
+
+Movies
+
+Books
+
+Voice search
+
+Instant suggestions.
+
+Library
+
+Liked songs
+
+Downloaded
+
+Playlists
+
+Recently played
+
+Mood history
+
+Travel playlists
+
+AI playlists
+
+Playlist Page
+
+Large cover
+
+Animated background
+
+Song list
+
+Collaborative playlist support
+
+AI summary
+
+Mood analysis
+
+Energy score
+
+Genre distribution
+
+Artist Page
+
+Hero image
+
+Monthly listeners
+
+Top songs
+
+Albums
+
+Upcoming concerts
+
+Biography
+
+Timeline
+
+Related artists
+
+Growth tracker
+
+Song Page
+
+Large album art
+
+Lyrics
+
+Meaning
+
+Story
+
+Credits
+
+Producer
+
+Genre
+
+Mood
+
+Tempo
+
+Energy
+
+Danceability
+
+Interactive waveform
+
+Comments
+
+Recommendations
+
+Profile
+
+Listening history
+
+Achievements
+
+Favorite moods
+
+Countries explored
+
+Artists followed
+
+Time listened
+
+Year in review
+
+Mood statistics
+
+Listening heatmap
+
+Settings
+
+Theme
+
+Language
+
+Notifications
+
+Privacy
+
+Download quality
+
+Audio quality
+
+Accessibility
+
+Animations
+
+Use
+
+Framer Motion
+
+GSAP-like transitions
+
+Smooth scrolling
+
+Page transitions
+
+Hover glow
+
+Card lift
+
+Floating gradients
+
+Music pulse
+
+Wave animations
+
+Animated equalizer
+
+Loading skeletons
+
+Shimmer effects
+
+Confetti on achievements
+
+UI Components
+
+Glass cards
+
+Floating action buttons
+
+Animated chips
+
+Gradient buttons
+
+Circular progress bars
+
+Waveforms
+
+3D globe
+
+Timeline
+
+Carousel
+
+Interactive charts
+
+Dynamic badges
+
+Bottom music player
+
+AI chat panel
+
+Voice recorder modal
+
+AI Features
+
+
+AI DJ conversation
+Emotion detection
+Playlist generation
+Lyrics explanation
+Song recommendations
+Music discovery chat
+Book/movie-to-music recommendations
+Playlist descriptions
+
+Design the architecture so the AI provider can be swapped without changing the frontend.
+
+Tech Stack
+
+Frontend
+
+React
+Next.js (App Router)
+TypeScript
+Tailwind CSS
+Framer Motion
+React Three Fiber
+Three.js
+Zustand (state management)
+React Query / TanStack Query
+
+Backend
+
+Node.js
+Express.js (or Next.js API routes)
+PostgreSQL
+Prisma ORM
+Redis (caching)
+JWT Authentication
+
+Storage
+
+Cloudinary (playlist artwork, profile images)
+Supabase Storage or AWS S3 (optional)
+
+Authentication
+
+Email/password
+Google OAuth
+GitHub OAuth
+
+Music Integration
+
+Spotify Web API (for metadata, playlists, artists, albums, recommendations)
+MusicBrainz and Last.fm APIs as optional fallbacks where appropriate
+
+Maps
+
+Three.js globe
+Country metadata
+
+Weather
+
+OpenWeather API (or similar)
+Performance
+Responsive across desktop, tablet, and mobile
+Lazy loading
+Code splitting
+Image optimization
+Fast page transitions
+Accessible (WCAG-friendly)
+SEO optimized
+PWA support with offline caching for UI and locally stored playlists (where licensing permits)
+Dark/light mode with dynamic theming
+Final Goal
+
+Build a polished, production-ready application that feels like the next generation of music streaming—not just a Spotify clone. The emphasis should be on discovery, personalization, AI assistance, immersive visuals, and delightful interactions. The interface should feel premium, fluid, and emotionally engaging, with every major feature connected through a cohesive design system and smooth user experience. 
+🎙️ Hum a tune to find a song.
+😊 Detect emotion from text ("I'm feeling nostalgic") and generate a playlist.
+📚 Explain song lyrics line by line.
+🎵 Recommend songs based on books, movies, or TV shows you enjoy.
+🖼️ Generate AI album art for custom playlists.
+✈️ Create travel playlists for flights, road trips, or train rides.
+
+You are given a task to integrate an existing React component in the codebase
+
+The codebase should support:
+- shadcn project structure  
+- Tailwind CSS
+- Typescript
+
+If it doesn't, provide instructions on how to setup project via shadcn CLI, install Tailwind or Typescript.
+
+Determine the default path for components and styles. 
+If default path for components is not /components/ui, provide instructions on why it's important to create this folder
+Copy-paste this component to /components/ui folder:
+```tsx
+spotlight-card.tsx
+import React, { useEffect, useRef, ReactNode } from 'react';
+
+interface GlowCardProps {
+  children: ReactNode;
+  className?: string;
+  glowColor?: 'blue' | 'purple' | 'green' | 'red' | 'orange';
+  size?: 'sm' | 'md' | 'lg';
+  width?: string | number;
+  height?: string | number;
+  customSize?: boolean; // When true, ignores size prop and uses width/height or className
+}
+
+const glowColorMap = {
+  blue: { base: 220, spread: 200 },
+  purple: { base: 280, spread: 300 },
+  green: { base: 120, spread: 200 },
+  red: { base: 0, spread: 200 },
+  orange: { base: 30, spread: 200 }
+};
+
+const sizeMap = {
+  sm: 'w-48 h-64',
+  md: 'w-64 h-80',
+  lg: 'w-80 h-96'
+};
+
+const GlowCard: React.FC<GlowCardProps> = ({ 
+  children, 
+  className = '', 
+  glowColor = 'blue',
+  size = 'md',
+  width,
+  height,
+  customSize = false
+}) => {
+  const cardRef = useRef<HTMLDivElement>(null);
+  const innerRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    const syncPointer = (e: PointerEvent) => {
+      const { clientX: x, clientY: y } = e;
+      
+      if (cardRef.current) {
+        cardRef.current.style.setProperty('--x', x.toFixed(2));
+        cardRef.current.style.setProperty('--xp', (x / window.innerWidth).toFixed(2));
+        cardRef.current.style.setProperty('--y', y.toFixed(2));
+        cardRef.current.style.setProperty('--yp', (y / window.innerHeight).toFixed(2));
+      }
+    };
+
+    document.addEventListener('pointermove', syncPointer);
+    return () => document.removeEventListener('pointermove', syncPointer);
+  }, []);
+
+  const { base, spread } = glowColorMap[glowColor];
+
+  // Determine sizing
+  const getSizeClasses = () => {
+    if (customSize) {
+      return ''; // Let className or inline styles handle sizing
+    }
+    return sizeMap[size];
+  };
+
+  const getInlineStyles = () => {
+    const baseStyles = {
+      '--base': base,
+      '--spread': spread,
+      '--radius': '14',
+      '--border': '3',
+      '--backdrop': 'hsl(0 0% 60% / 0.12)',
+      '--backup-border': 'var(--backdrop)',
+      '--size': '200',
+      '--outer': '1',
+      '--border-size': 'calc(var(--border, 2) * 1px)',
+      '--spotlight-size': 'calc(var(--size, 150) * 1px)',
+      '--hue': 'calc(var(--base) + (var(--xp, 0) * var(--spread, 0)))',
+      backgroundImage: `radial-gradient(
+        var(--spotlight-size) var(--spotlight-size) at
+        calc(var(--x, 0) * 1px)
+        calc(var(--y, 0) * 1px),
+        hsl(var(--hue, 210) calc(var(--saturation, 100) * 1%) calc(var(--lightness, 70) * 1%) / var(--bg-spot-opacity, 0.1)), transparent
+      )`,
+      backgroundColor: 'var(--backdrop, transparent)',
+      backgroundSize: 'calc(100% + (2 * var(--border-size))) calc(100% + (2 * var(--border-size)))',
+      backgroundPosition: '50% 50%',
+      backgroundAttachment: 'fixed',
+      border: 'var(--border-size) solid var(--backup-border)',
+      position: 'relative' as const,
+      touchAction: 'none' as const,
+    };
+
+    // Add width and height if provided
+    if (width !== undefined) {
+      baseStyles.width = typeof width === 'number' ? `${width}px` : width;
+    }
+    if (height !== undefined) {
+      baseStyles.height = typeof height === 'number' ? `${height}px` : height;
+    }
+
+    return baseStyles;
+  };
+
+  const beforeAfterStyles = `
+    [data-glow]::before,
+    [data-glow]::after {
+      pointer-events: none;
+      content: "";
+      position: absolute;
+      inset: calc(var(--border-size) * -1);
+      border: var(--border-size) solid transparent;
+      border-radius: calc(var(--radius) * 1px);
+      background-attachment: fixed;
+      background-size: calc(100% + (2 * var(--border-size))) calc(100% + (2 * var(--border-size)));
+      background-repeat: no-repeat;
+      background-position: 50% 50%;
+      mask: linear-gradient(transparent, transparent), linear-gradient(white, white);
+      mask-clip: padding-box, border-box;
+      mask-composite: intersect;
+    }
+    
+    [data-glow]::before {
+      background-image: radial-gradient(
+        calc(var(--spotlight-size) * 0.75) calc(var(--spotlight-size) * 0.75) at
+        calc(var(--x, 0) * 1px)
+        calc(var(--y, 0) * 1px),
+        hsl(var(--hue, 210) calc(var(--saturation, 100) * 1%) calc(var(--lightness, 50) * 1%) / var(--border-spot-opacity, 1)), transparent 100%
+      );
+      filter: brightness(2);
+    }
+    
+    [data-glow]::after {
+      background-image: radial-gradient(
+        calc(var(--spotlight-size) * 0.5) calc(var(--spotlight-size) * 0.5) at
+        calc(var(--x, 0) * 1px)
+        calc(var(--y, 0) * 1px),
+        hsl(0 100% 100% / var(--border-light-opacity, 1)), transparent 100%
+      );
+    }
+    
+    [data-glow] [data-glow] {
+      position: absolute;
+      inset: 0;
+      will-change: filter;
+      opacity: var(--outer, 1);
+      border-radius: calc(var(--radius) * 1px);
+      border-width: calc(var(--border-size) * 20);
+      filter: blur(calc(var(--border-size) * 10));
+      background: none;
+      pointer-events: none;
+      border: none;
+    }
+    
+    [data-glow] > [data-glow]::before {
+      inset: -10px;
+      border-width: 10px;
+    }
+  `;
+
+  return (
+    <>
+      <style dangerouslySetInnerHTML={{ __html: beforeAfterStyles }} />
+      <div
+        ref={cardRef}
+        data-glow
+        style={getInlineStyles()}
+        className={`
+          ${getSizeClasses()}
+          ${!customSize ? 'aspect-[3/4]' : ''}
+          rounded-2xl 
+          relative 
+          grid 
+          grid-rows-[1fr_auto] 
+          shadow-[0_1rem_2rem_-1rem_black] 
+          p-4 
+          gap-4 
+          backdrop-blur-[5px]
+          ${className}
+        `}
+      >
+        <div ref={innerRef} data-glow></div>
+        {children}
+      </div>
+    </>
+  );
+};
+
+export { GlowCard }
+
+demo.tsx
+import { GlowCard } from "@/components/ui/spotlight-card";
+
+export function Default(){
+  return(
+    <div className="w-screen h-screen flex flex-row items-center justify-center gap-10 custom-cursor">
+      <GlowCard />
+      <GlowCard />
+      <GlowCard />
+    </div>
+  );
+};
+```
+
+Implementation Guidelines
+ 1. Analyze the component structure and identify all required dependencies
+ 2. Review the component's argumens and state
+ 3. Identify any required context providers or hooks and install them
+ 4. Questions to Ask
+ - What data/props will be passed to this component?
+ - Are there any specific state management requirements?
+ - Are there any required assets (images, icons, etc.)?
+ - What is the expected responsive behavior?
+ - What is the best place to use this component in the app?
+
+Steps to integrate
+ 0. Copy paste all the code above in the correct directories
+ 1. Install external dependencies
+ 2. Fill image assets with Unsplash stock images you know exist
+ 3. Use lucide-react icons for svgs or logos if component requires them
+
+
+
+
+
+for buttons animation You are given a task to integrate an existing React component in the codebase
+
+The codebase should support:
+- shadcn project structure  
+- Tailwind CSS
+- Typescript
+
+If it doesn't, provide instructions on how to setup project via shadcn CLI, install Tailwind or Typescript.
+
+Determine the default path for components and styles. 
+If default path for components is not /components/ui, provide instructions on why it's important to create this folder
+Copy-paste this component to /components/ui folder:
+```tsx
+gradient-button.tsx
+"use client"
+
+import * as React from "react"
+import { Slot } from "@radix-ui/react-slot"
+import { cva, type VariantProps } from "class-variance-authority"
+import { cn } from "@/lib/utils"
+
+const gradientButtonVariants = cva(
+  [
+    "gradient-button",
+    "inline-flex items-center justify-center",
+    "rounded-[11px] min-w-[132px] px-9 py-4",
+    "text-base leading-[19px] font-[500] text-white",
+    "font-sans font-bold",
+    "focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring",
+    "disabled:pointer-events-none disabled:opacity-50",
+  ],
+  {
+    variants: {
+      variant: {
+        default: "",
+        variant: "gradient-button-variant",
+      },
+    },
+    defaultVariants: {
+      variant: "default",
+    },
+  }
+)
+
+export interface GradientButtonProps
+  extends React.ButtonHTMLAttributes<HTMLButtonElement>,
+    VariantProps<typeof gradientButtonVariants> {
+  asChild?: boolean
+}
+
+const GradientButton = React.forwardRef<HTMLButtonElement, GradientButtonProps>(
+  ({ className, variant, asChild = false, ...props }, ref) => {
+    const Comp = asChild ? Slot : "button"
+    return (
+      <Comp
+        className={cn(gradientButtonVariants({ variant, className }))}
+        ref={ref}
+        {...props}
+      />
+    )
+  }
+)
+GradientButton.displayName = "GradientButton"
+
+export { GradientButton, gradientButtonVariants }
+
+demo.tsx
+import { GradientButton } from "@/components/ui/gradient-button"
+
+function Demo() {
+  return (
+    <div className="flex gap-8">
+      <GradientButton>Get Started</GradientButton>
+      <GradientButton variant="variant">Get Started</GradientButton>
+    </div>
+  )
+}
+
+export { Demo }
+```
+
+Install NPM dependencies:
+```bash
+@radix-ui/react-slot, class-variance-authority
+```
+
+Extend existing globals.css with this code:
+```css
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  @property --pos-x {
+    syntax: '<percentage>';
+    initial-value: 11.14%;
+    inherits: false;
+  }
+
+  @property --pos-y {
+    syntax: '<percentage>';
+    initial-value: 140%;
+    inherits: false;
+  }
+
+  @property --spread-x {
+    syntax: '<percentage>';
+    initial-value: 150%;
+    inherits: false;
+  }
+
+  @property --spread-y {
+    syntax: '<percentage>';
+    initial-value: 180.06%;
+    inherits: false;
+  }
+
+  @property --color-1 {
+    syntax: '<color>';
+    initial-value: #000;
+    inherits: false;
+  }
+
+  @property --color-2 {
+    syntax: '<color>';
+    initial-value: #08012c;
+    inherits: false;
+  }
+
+  @property --color-3 {
+    syntax: '<color>';
+    initial-value: #4e1e40;
+    inherits: false;
+  }
+
+  @property --color-4 {
+    syntax: '<color>';
+    initial-value: #70464e;
+    inherits: false;
+  }
+
+  @property --color-5 {
+    syntax: '<color>';
+    initial-value: #88394c;
+    inherits: false;
+  }
+
+  @property --border-angle {
+    syntax: '<angle>';
+    initial-value: 20deg;
+    inherits: true;
+  }
+
+  @property --border-color-1 {
+    syntax: '<color>';
+    initial-value: hsla(340, 75%, 60%, 0.2);
+    inherits: true;
+  }
+
+  @property --border-color-2 {
+    syntax: '<color>';
+    initial-value: hsla(340, 75%, 40%, 0.75);
+    inherits: true;
+  }
+
+  @property --stop-1 {
+    syntax: '<percentage>';
+    initial-value: 37.35%;
+    inherits: false;
+  }
+
+  @property --stop-2 {
+    syntax: '<percentage>';
+    initial-value: 61.36%;
+    inherits: false;
+  }
+
+  @property --stop-3 {
+    syntax: '<percentage>';
+    initial-value: 78.42%;
+    inherits: false;
+  }
+
+  @property --stop-4 {
+    syntax: '<percentage>';
+    initial-value: 89.52%;
+    inherits: false;
+  }
+
+  @property --stop-5 {
+    syntax: '<percentage>';
+    initial-value: 100%;
+    inherits: false;
+  }
+}
+
+@layer components {
+  .gradient-button {
+    @apply relative appearance-none cursor-pointer;
+    background: radial-gradient(
+      var(--spread-x) var(--spread-y) at var(--pos-x) var(--pos-y),
+      var(--color-1) var(--stop-1),
+      var(--color-2) var(--stop-2),
+      var(--color-3) var(--stop-3),
+      var(--color-4) var(--stop-4),
+      var(--color-5) var(--stop-5)
+    );
+    transition:
+      --pos-x 0.5s,
+      --pos-y 0.5s,
+      --spread-x 0.5s,
+      --spread-y 0.5s,
+      --color-1 0.5s,
+      --color-2 0.5s,
+      --color-3 0.5s,
+      --color-4 0.5s,
+      --color-5 0.5s,
+      --border-angle 0.5s,
+      --border-color-1 0.5s,
+      --border-color-2 0.5s,
+      --stop-1 0.5s,
+      --stop-2 0.5s,
+      --stop-3 0.5s,
+      --stop-4 0.5s,
+      --stop-5 0.5s;
+  }
+
+  .gradient-button::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    border-radius: inherit;
+    padding: 1px;
+    background: linear-gradient(
+      var(--border-angle),
+      var(--border-color-1),
+      var(--border-color-2)
+    );
+    mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+    mask-composite: exclude;
+    pointer-events: none;
+  }
+
+  .gradient-button:hover {
+    --pos-x: 0%;
+    --pos-y: 91.51%;
+    --spread-x: 120.24%;
+    --spread-y: 103.18%;
+    --color-1: #c96287;
+    --color-2: #c66c64;
+    --color-3: #cc7d23;
+    --color-4: #37140a;
+    --color-5: #000;
+    --border-angle: 190deg;
+    --border-color-1: hsla(340, 78%, 90%, 0.1);
+    --border-color-2: hsla(340, 75%, 90%, 0.6);
+    --stop-1: 0%;
+    --stop-2: 8.8%;
+    --stop-3: 21.44%;
+    --stop-4: 71.34%;
+    --stop-5: 85.76%;
+  }
+
+  .gradient-button-variant {
+    --color-1: #000022;
+    --color-2: #1f3f6d;
+    --color-3: #469396;
+    --color-4: #f1ffa5;
+    --border-angle: 200deg;
+    --border-color-1: hsla(320, 75%, 90%, 0.6);
+    --border-color-2: hsla(320, 50%, 90%, 0.15);
+  }
+
+  .gradient-button-variant:hover {
+    --pos-x: 0%;
+    --pos-y: 95.51%;
+    --spread-x: 110.24%;
+    --spread-y: 110.2%;
+    --color-1: #000020;
+    --color-2: #f1ffa5;
+    --color-3: #469396;
+    --color-4: #1f3f6d;
+    --color-5: #000;
+    --stop-1: 0%;
+    --stop-2: 10%;
+    --stop-3: 35.44%;
+    --stop-4: 71.34%;
+    --stop-5: 90.76%;
+    --border-angle: 210deg;
+    --border-color-1: hsla(320, 75%, 90%, 0.2);
+    --border-color-2: hsla(320, 50%, 90%, 0.75);
+  }
+}
+```
+
+Implementation Guidelines
+ 1. Analyze the component structure and identify all required dependencies
+ 2. Review the component's argumens and state
+ 3. Identify any required context providers or hooks and install them
+ 4. Questions to Ask
+ - What data/props will be passed to this component?
+ - Are there any specific state management requirements?
+ - Are there any required assets (images, icons, etc.)?
+ - What is the expected responsive behavior?
+ - What is the best place to use this component in the app?
+
+Steps to integrate
+ 0. Copy paste all the code above in the correct directories
+ 1. Install external dependencies
+ 2. Fill image assets with Unsplash stock images you know exist
+ 3. Use lucide-react icons for svgs or logos if component requires them
+
+
+tips:
+Landing page: Aurora animated background + floating particles + staggered text reveal.
+Mood cards: Tilt on hover, glowing borders, smooth expansion.
+Music player: Animated vinyl rotation, audio equalizer bars, waveform progress.
+AI DJ: Streaming text effect, typing indicator, message transitions.
+Music Globe: Smooth inertia, country hover glow, camera zoom.
+Playlists: Shared-element transitions when opening.
+Song page: Parallax album art and animated lyric highlighting.
+Profile: Count-up statistics and animated charts.
+
+
+Please analyze the images in the assets folder.
+Use them only as UI inspiration.
+Do not copy them exactly.
+Design a unique premium interface for Aural using the best ideas from these images.
+

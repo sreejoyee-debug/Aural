@@ -1,0 +1,76 @@
+## Codebase Patterns
+- MyApp is in `ralph/myapp/` — a React + TypeScript + Vite project
+- Database layer is in `src/db/` with schema, migrations, and a localStorage-backed store
+- Migrations follow the `NNN_description.ts` naming convention in `src/db/migrations/`
+- Each migration exports a default object with `up()` and `down()` methods returning SQL strings
+- Schema types are defined in `src/db/schema.ts` — this is the canonical source of truth
+- Use `isValidPriority()` type guard when accepting priority values from user input
+- Run `npx tsc --noEmit` for typecheck, `npm run lint` for lint (oxlint)
+- UI components use inline styles for styling (no CSS imports for component-specific styles)
+- Task cards render with colored priority badges at the left using background colors and borders
+- Priority colors: high=#fee2e2 bg, #dc2626 text; medium=#fef3c7 bg, #d97706 text; low=#f3f4f6 bg, #6b7280 text
+
+---
+
+## 2026-08-08T19:50:00+05:30 - US-001
+- Implemented: "Add priority field to database"
+- Created MyApp project scaffold (React + TypeScript + Vite)
+- Files created:
+  - `myapp/src/db/schema.ts` — Task type, TaskPriority type ('high'|'medium'|'low'), table schema definition
+  - `myapp/src/db/migrations/runner.ts` — Migration runner with localStorage tracking
+  - `myapp/src/db/migrations/001_add_priority_field.ts` — Creates tasks table with priority column (default 'medium')
+  - `myapp/src/db/index.ts` — DB init, task CRUD operations, re-exports
+  - `myapp/src/App.tsx` — Updated to initialize DB and demonstrate task creation with priority
+- Typecheck: ✅ passes (npx tsc --noEmit)
+- Lint: ✅ passes (npm run lint — 0 warnings, 0 errors)
+- **Learnings for future iterations:**
+  - No existing MyApp codebase existed — created from scratch with `create-vite` react-ts template
+  - The project uses oxlint (not eslint) for linting — runs via `npm run lint`
+  - localStorage is used as the database backend in the browser environment
+  - Migration runner is idempotent — safe to run multiple times
+---
+
+## 2026-08-15T17:30:00+05:30 - US-002
+- Implemented: "Display priority indicator on task cards"
+- Created TaskCard component that renders task with colored priority badge
+- Files modified:
+  - `myapp/src/App.tsx` — Extracted TaskCard component with inline styles for priority badges, updated task list to render TaskCard components instead of simple list items
+- Priority badge styling:
+  - High: red background (#fee2e2), red text (#dc2626), red border (#fca5a5)
+  - Medium: yellow background (#fef3c7), orange text (#d97706), yellow border (#fcd34d)
+  - Low: gray background (#f3f4f6), gray text (#6b7280), gray border (#d1d5db)
+- Card styling: white background, subtle shadow, rounded corners (8px), flex layout with priority badge on left and task content on right
+- Browser verification: ✅ Created 3 test tasks with different priorities, all badges render correctly with proper colors
+- Typecheck: ✅ passes (npx tsc --noEmit)
+- Lint: ✅ passes (npm run lint — 0 warnings, 0 errors)
+- Git: ✅ Committed with message "feat: US-002 - Display priority indicator on task cards"
+- **Learnings for future iterations:**
+  - TaskCard is a simple functional component accepting {task} prop
+  - Inline styles work well for small component-specific styling
+  - Priority color scheme is consistent and accessible
+---
+
+## 2026-08-15T18:00:00+05:30 - US-003
+- Implemented: "Add priority selector to task edit"
+- Created EditModal component with priority selector
+- Files modified:
+  - `myapp/src/App.tsx` — Added EditModal component, TaskCard now accepts onEdit prop, App state tracks editingTask, handleSavePriority calls updateTaskPriority and updates state
+- EditModal features:
+  - Shows overlay background (semi-transparent black) with centered white card
+  - Displays task title and description
+  - Priority dropdown with current priority selected
+  - onChange handler immediately saves via updateTaskPriority()
+  - Done button closes modal
+  - Click outside modal closes it (via stopPropagation on modal container)
+- Database integration: Uses updateTaskPriority() from db/index.ts which was already implemented in US-001
+- Immediate save: Priority changes are saved to localStorage immediately when dropdown changes
+- Browser verification: ✅ Clicked task card to open modal, verified "High" priority selected, changed to "Medium", change reflected instantly in background task card, closed modal, verified persistence after reload
+- Typecheck: ✅ passes (npx tsc --noEmit)
+- Lint: ✅ passes (npm run lint — 0 warnings, 0 errors)
+- Git: ✅ Committed with message "feat: US-003 - Add priority selector to task edit"
+- **Learnings for future iterations:**
+  - EditModal component manages its own priority state with setPriority for UI binding
+  - onClick handler on card content prevents event bubbling to backdrop
+  - Modal renders conditionally only when editingTask !== null
+  - updateTaskPriority already existed from US-001, no new db functions needed
+---

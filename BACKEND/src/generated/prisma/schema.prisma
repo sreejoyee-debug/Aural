@@ -1,0 +1,182 @@
+generator client {
+  provider = "prisma-client-js"
+  output   = "../BACKEND/src/generated/prisma"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id               String             @id @default(uuid()) @db.Uuid
+  email            String             @unique
+  displayName      String
+  avatarUrl        String?
+  createdAt        DateTime           @default(now())
+  updatedAt        DateTime           @updatedAt
+  playlists        Playlist[]
+  moodEvents       MoodEvent[]
+  listeningEvents  ListeningEvent[]
+  artistFollows    ArtistFollow[]
+  favoriteTracks   FavoriteTrack[]
+  listeningHistory ListeningHistory[]
+  trackedArtists   TrackedArtist[]
+}
+
+model Artist {
+  id               String         @id @default(uuid()) @db.Uuid
+  name             String         @unique
+  countryCode      String?        @db.Char(2)
+  imageUrl         String?
+  monthlyListeners Int?
+  createdAt        DateTime       @default(now())
+  tracks           Track[]
+  followers        ArtistFollow[]
+}
+
+model Track {
+  id              String           @id @default(uuid()) @db.Uuid
+  externalId      String?          @unique
+  title           String
+  album           String?
+  artworkUrl      String?
+  durationSeconds Int
+  artistId        String           @db.Uuid
+  audioFeatures   Json?
+  createdAt       DateTime         @default(now())
+  artist          Artist           @relation(fields: [artistId], references: [id], onDelete: Cascade)
+  playlistTracks  PlaylistTrack[]
+  listeningEvents ListeningEvent[]
+
+  @@index([artistId])
+}
+
+model Playlist {
+  id          String          @id @default(uuid()) @db.Uuid
+  ownerId     String          @db.Uuid
+  title       String
+  description String?
+  coverUrl    String?
+  source      PlaylistSource  @default(MANUAL)
+  isPublic    Boolean         @default(false)
+  createdAt   DateTime        @default(now())
+  updatedAt   DateTime        @updatedAt
+  owner       User            @relation(fields: [ownerId], references: [id], onDelete: Cascade)
+  tracks      PlaylistTrack[]
+
+  @@index([ownerId, updatedAt])
+}
+
+model PlaylistTrack {
+  playlistId String   @db.Uuid
+  trackId    String   @db.Uuid
+  position   Int
+  addedAt    DateTime @default(now())
+  playlist   Playlist @relation(fields: [playlistId], references: [id], onDelete: Cascade)
+  track      Track    @relation(fields: [trackId], references: [id], onDelete: Cascade)
+
+  @@id([playlistId, trackId])
+  @@index([playlistId, position])
+}
+
+model MoodEvent {
+  id        String     @id @default(uuid()) @db.Uuid
+  userId    String     @db.Uuid
+  mood      String
+  source    MoodSource
+  metadata  Json?
+  createdAt DateTime   @default(now())
+  user      User       @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId, createdAt])
+}
+
+model ListeningEvent {
+  id         String   @id @default(uuid()) @db.Uuid
+  userId     String   @db.Uuid
+  trackId    String   @db.Uuid
+  progressMs Int
+  occurredAt DateTime @default(now())
+  user       User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  track      Track    @relation(fields: [trackId], references: [id], onDelete: Cascade)
+
+  @@index([userId, occurredAt])
+}
+
+model ArtistFollow {
+  userId    String   @db.Uuid
+  artistId  String   @db.Uuid
+  createdAt DateTime @default(now())
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  artist    Artist   @relation(fields: [artistId], references: [id], onDelete: Cascade)
+
+  @@id([userId, artistId])
+}
+
+model FavoriteTrack {
+  id              String   @id @default(uuid()) @db.Uuid
+  userId          String   @db.Uuid
+  externalTrackId String
+  title           String
+  artist          String
+  artistId        String?
+  album           String?
+  artworkUrl      String?
+  durationSeconds Int      @default(0)
+  genre           String?
+  streamUrl       String?
+  createdAt       DateTime @default(now())
+  user            User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, externalTrackId])
+  @@index([userId, createdAt])
+}
+
+model ListeningHistory {
+  id              String   @id @default(uuid()) @db.Uuid
+  userId          String   @db.Uuid
+  externalTrackId String
+  title           String
+  artist          String
+  artistId        String?
+  album           String?
+  artworkUrl      String?
+  durationSeconds Int      @default(0)
+  genre           String?
+  streamUrl       String?
+  playedAt        DateTime @default(now())
+  user            User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId, playedAt])
+}
+
+model TrackedArtist {
+  id               String   @id @default(uuid()) @db.Uuid
+  userId           String   @db.Uuid
+  externalArtistId String
+  name             String
+  handle           String?
+  imageUrl         String?
+  createdAt        DateTime @default(now())
+  user             User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, externalArtistId])
+  @@index([userId, createdAt])
+}
+
+enum PlaylistSource {
+  MANUAL
+  AI_DJ
+  MOOD
+  WEATHER
+  TRAVEL
+  ROULETTE
+}
+
+enum MoodSource {
+  PICKER
+  TEXT
+  WEATHER
+  PLAYLIST
+}
