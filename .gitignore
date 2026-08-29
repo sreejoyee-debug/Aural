@@ -1,0 +1,8 @@
+# Local configuration and credentials
+FRONTEND/.env
+BACKEND/.env
+!FRONTEND/.env.example
+!BACKEND/.env.example
+
+# Local runtime output
+*.log
