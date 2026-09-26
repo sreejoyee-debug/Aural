@@ -6,3 +6,6 @@ BACKEND/.env
 
 # Local runtime output
 *.log
+
+# Dependencies are installed per environment; never commit platform-specific binaries.
+node_modules/
