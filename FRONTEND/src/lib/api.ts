@@ -57,14 +57,19 @@ export async function getTrack(id: string) {
   return { track: toSong(payload.track), related: payload.related.map(toSong) }
 }
 
+export async function getArtist(id: string) {
+  const payload = await request<{ artist: { id: string; name: string; handle?: string | null; imageUrl?: string | null; followerCount?: number | null; trackCount?: number | null }; tracks: ApiTrack[] }>(`/music/artist/${encodeURIComponent(id)}`)
+  return { artist: payload.artist, tracks: payload.tracks.map(toSong) }
+}
+
 export async function getMoodRecommendations(mood: string) {
   const payload = await request<{ tracks: ApiTrack[] }>('/recommendations/mood', { method: 'POST', body: JSON.stringify({ mood }) })
   return tracks(payload)
 }
 
 export async function getRouletteTrack() {
-  const payload = await request<{ track: ApiTrack }>('/music/roulette')
-  return toSong(payload.track)
+  const payload = await request<{ track: ApiTrack; route: string }>('/music/roulette')
+  return { track: toSong(payload.track), route: payload.route }
 }
 
 export type WeatherMix = { weather: { city: string; temperature: number; condition: string; description: string; icon: string }; mood: string; tracks: Song[] }
@@ -90,8 +95,40 @@ function songPayload(song: Song) {
 export async function recordHistory(song: Song) { return request('/history', { method: 'POST', body: JSON.stringify(songPayload(song)) }) }
 export async function saveTrack(song: Song) { return request('/library/save', { method: 'POST', body: JSON.stringify(songPayload(song)) }) }
 export async function removeTrack(id: string) { return request(`/library/${encodeURIComponent(id)}`, { method: 'DELETE' }) }
-export async function getLibrary() { return request<{ favorites: Array<ApiTrack>; history: Array<ApiTrack>; playlists: Array<{ id: string; title: string; description?: string; _count: { tracks: number } }> }>('/library') }
-export async function getProfile() { return request<{ user: { displayName: string; email: string }; stats: { favorites: number; history: number; artists: number; playlists: number } }>('/profile') }
-export async function getTrackedArtists() { return request<{ artists: Array<{ externalArtistId: string; name: string; handle?: string; imageUrl?: string }> }>('/artists/tracked') }
+type LibraryTrack = ApiTrack & { externalTrackId?: string }
+
+function savedTrackToSong(track: LibraryTrack, index = 0): Song {
+  return toSong({ ...track, id: track.externalTrackId ?? track.id }, index)
+}
+
+export type LibraryData = {
+  favorites: Song[]
+  history: Song[]
+  playlists: Array<{ id: string; title: string; description?: string | null; _count: { tracks: number } }>
+}
+
+export async function getLibrary(): Promise<LibraryData> {
+  const payload = await request<{ favorites: LibraryTrack[]; history: LibraryTrack[]; playlists: LibraryData['playlists'] }>('/library')
+  return {
+    favorites: payload.favorites.map(savedTrackToSong),
+    history: payload.history.map(savedTrackToSong),
+    playlists: payload.playlists,
+  }
+}
+
+export type ProfileData = {
+  user: { displayName: string; email: string; avatarUrl?: string | null } | null
+  stats: { favorites: number; history: number; artists: number; playlists: number }
+}
+
+export async function getProfile(): Promise<ProfileData> { return request<ProfileData>('/profile') }
+export async function updateProfile(profile: { displayName: string; avatarUrl?: string | null }) { return request<{ user: NonNullable<ProfileData['user']> }>('/profile', { method: 'PATCH', body: JSON.stringify(profile) }) }
+export async function createPlaylist(input: { title: string; description?: string; source?: 'TRAVEL' | 'MANUAL' | 'MOOD' | 'WEATHER' | 'ROULETTE' }) {
+  return request<{ playlist: { id: string; title: string } }>('/playlists', { method: 'POST', body: JSON.stringify(input) })
+}
+export async function addTrackToPlaylist(playlistId: string, song: Song) {
+  return request(`/playlists/${encodeURIComponent(playlistId)}/tracks`, { method: 'POST', body: JSON.stringify(songPayload(song)) })
+}
+export async function getTrackedArtists() { return request<{ artists: Array<{ externalArtistId: string; name: string; handle?: string | null; imageUrl?: string | null }> }>('/artists/tracked') }
 export async function trackArtist(artist: { id: string; name: string; handle?: string | null; imageUrl?: string | null }) { return request('/artists/track', { method: 'POST', body: JSON.stringify({ artistId: artist.id, name: artist.name, handle: artist.handle, imageUrl: artist.imageUrl }) }) }
 export async function untrackArtist(id: string) { return request(`/artists/track/${encodeURIComponent(id)}`, { method: 'DELETE' }) }

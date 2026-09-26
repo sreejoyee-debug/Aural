@@ -4424,6 +4424,8 @@ export namespace Prisma {
     album: string | null
     artworkUrl: string | null
     durationSeconds: number | null
+    streamUrl: string | null
+    genre: string | null
     artistId: string | null
     createdAt: Date | null
   }
@@ -4435,6 +4437,8 @@ export namespace Prisma {
     album: string | null
     artworkUrl: string | null
     durationSeconds: number | null
+    streamUrl: string | null
+    genre: string | null
     artistId: string | null
     createdAt: Date | null
   }
@@ -4446,6 +4450,8 @@ export namespace Prisma {
     album: number
     artworkUrl: number
     durationSeconds: number
+    streamUrl: number
+    genre: number
     artistId: number
     audioFeatures: number
     createdAt: number
@@ -4468,6 +4474,8 @@ export namespace Prisma {
     album?: true
     artworkUrl?: true
     durationSeconds?: true
+    streamUrl?: true
+    genre?: true
     artistId?: true
     createdAt?: true
   }
@@ -4479,6 +4487,8 @@ export namespace Prisma {
     album?: true
     artworkUrl?: true
     durationSeconds?: true
+    streamUrl?: true
+    genre?: true
     artistId?: true
     createdAt?: true
   }
@@ -4490,6 +4500,8 @@ export namespace Prisma {
     album?: true
     artworkUrl?: true
     durationSeconds?: true
+    streamUrl?: true
+    genre?: true
     artistId?: true
     audioFeatures?: true
     createdAt?: true
@@ -4589,6 +4601,8 @@ export namespace Prisma {
     album: string | null
     artworkUrl: string | null
     durationSeconds: number
+    streamUrl: string | null
+    genre: string | null
     artistId: string
     audioFeatures: JsonValue | null
     createdAt: Date
@@ -4620,6 +4634,8 @@ export namespace Prisma {
     album?: boolean
     artworkUrl?: boolean
     durationSeconds?: boolean
+    streamUrl?: boolean
+    genre?: boolean
     artistId?: boolean
     audioFeatures?: boolean
     createdAt?: boolean
@@ -4636,6 +4652,8 @@ export namespace Prisma {
     album?: boolean
     artworkUrl?: boolean
     durationSeconds?: boolean
+    streamUrl?: boolean
+    genre?: boolean
     artistId?: boolean
     audioFeatures?: boolean
     createdAt?: boolean
@@ -4649,6 +4667,8 @@ export namespace Prisma {
     album?: boolean
     artworkUrl?: boolean
     durationSeconds?: boolean
+    streamUrl?: boolean
+    genre?: boolean
     artistId?: boolean
     audioFeatures?: boolean
     createdAt?: boolean
@@ -4662,12 +4682,14 @@ export namespace Prisma {
     album?: boolean
     artworkUrl?: boolean
     durationSeconds?: boolean
+    streamUrl?: boolean
+    genre?: boolean
     artistId?: boolean
     audioFeatures?: boolean
     createdAt?: boolean
   }
 
-  export type TrackOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "externalId" | "title" | "album" | "artworkUrl" | "durationSeconds" | "artistId" | "audioFeatures" | "createdAt", ExtArgs["result"]["track"]>
+  export type TrackOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "externalId" | "title" | "album" | "artworkUrl" | "durationSeconds" | "streamUrl" | "genre" | "artistId" | "audioFeatures" | "createdAt", ExtArgs["result"]["track"]>
   export type TrackInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     artist?: boolean | ArtistDefaultArgs<ExtArgs>
     playlistTracks?: boolean | Track$playlistTracksArgs<ExtArgs>
@@ -4695,6 +4717,8 @@ export namespace Prisma {
       album: string | null
       artworkUrl: string | null
       durationSeconds: number
+      streamUrl: string | null
+      genre: string | null
       artistId: string
       audioFeatures: Prisma.JsonValue | null
       createdAt: Date
@@ -5130,6 +5154,8 @@ export namespace Prisma {
     readonly album: FieldRef<"Track", 'String'>
     readonly artworkUrl: FieldRef<"Track", 'String'>
     readonly durationSeconds: FieldRef<"Track", 'Int'>
+    readonly streamUrl: FieldRef<"Track", 'String'>
+    readonly genre: FieldRef<"Track", 'String'>
     readonly artistId: FieldRef<"Track", 'String'>
     readonly audioFeatures: FieldRef<"Track", 'Json'>
     readonly createdAt: FieldRef<"Track", 'DateTime'>
@@ -14524,6 +14550,8 @@ export namespace Prisma {
     album: 'album',
     artworkUrl: 'artworkUrl',
     durationSeconds: 'durationSeconds',
+    streamUrl: 'streamUrl',
+    genre: 'genre',
     artistId: 'artistId',
     audioFeatures: 'audioFeatures',
     createdAt: 'createdAt'
@@ -14945,6 +14973,8 @@ export namespace Prisma {
     album?: StringNullableFilter<"Track"> | string | null
     artworkUrl?: StringNullableFilter<"Track"> | string | null
     durationSeconds?: IntFilter<"Track"> | number
+    streamUrl?: StringNullableFilter<"Track"> | string | null
+    genre?: StringNullableFilter<"Track"> | string | null
     artistId?: UuidFilter<"Track"> | string
     audioFeatures?: JsonNullableFilter<"Track">
     createdAt?: DateTimeFilter<"Track"> | Date | string
@@ -14960,6 +14990,8 @@ export namespace Prisma {
     album?: SortOrderInput | SortOrder
     artworkUrl?: SortOrderInput | SortOrder
     durationSeconds?: SortOrder
+    streamUrl?: SortOrderInput | SortOrder
+    genre?: SortOrderInput | SortOrder
     artistId?: SortOrder
     audioFeatures?: SortOrderInput | SortOrder
     createdAt?: SortOrder
@@ -14978,6 +15010,8 @@ export namespace Prisma {
     album?: StringNullableFilter<"Track"> | string | null
     artworkUrl?: StringNullableFilter<"Track"> | string | null
     durationSeconds?: IntFilter<"Track"> | number
+    streamUrl?: StringNullableFilter<"Track"> | string | null
+    genre?: StringNullableFilter<"Track"> | string | null
     artistId?: UuidFilter<"Track"> | string
     audioFeatures?: JsonNullableFilter<"Track">
     createdAt?: DateTimeFilter<"Track"> | Date | string
@@ -14993,6 +15027,8 @@ export namespace Prisma {
     album?: SortOrderInput | SortOrder
     artworkUrl?: SortOrderInput | SortOrder
     durationSeconds?: SortOrder
+    streamUrl?: SortOrderInput | SortOrder
+    genre?: SortOrderInput | SortOrder
     artistId?: SortOrder
     audioFeatures?: SortOrderInput | SortOrder
     createdAt?: SortOrder
@@ -15013,6 +15049,8 @@ export namespace Prisma {
     album?: StringNullableWithAggregatesFilter<"Track"> | string | null
     artworkUrl?: StringNullableWithAggregatesFilter<"Track"> | string | null
     durationSeconds?: IntWithAggregatesFilter<"Track"> | number
+    streamUrl?: StringNullableWithAggregatesFilter<"Track"> | string | null
+    genre?: StringNullableWithAggregatesFilter<"Track"> | string | null
     artistId?: UuidWithAggregatesFilter<"Track"> | string
     audioFeatures?: JsonNullableWithAggregatesFilter<"Track">
     createdAt?: DateTimeWithAggregatesFilter<"Track"> | Date | string
@@ -15741,6 +15779,8 @@ export namespace Prisma {
     album?: string | null
     artworkUrl?: string | null
     durationSeconds: number
+    streamUrl?: string | null
+    genre?: string | null
     audioFeatures?: NullableJsonNullValueInput | InputJsonValue
     createdAt?: Date | string
     artist: ArtistCreateNestedOneWithoutTracksInput
@@ -15755,6 +15795,8 @@ export namespace Prisma {
     album?: string | null
     artworkUrl?: string | null
     durationSeconds: number
+    streamUrl?: string | null
+    genre?: string | null
     artistId: string
     audioFeatures?: NullableJsonNullValueInput | InputJsonValue
     createdAt?: Date | string
@@ -15769,6 +15811,8 @@ export namespace Prisma {
     album?: NullableStringFieldUpdateOperationsInput | string | null
     artworkUrl?: NullableStringFieldUpdateOperationsInput | string | null
     durationSeconds?: IntFieldUpdateOperationsInput | number
+    streamUrl?: NullableStringFieldUpdateOperationsInput | string | null
+    genre?: NullableStringFieldUpdateOperationsInput | string | null
     audioFeatures?: NullableJsonNullValueInput | InputJsonValue
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     artist?: ArtistUpdateOneRequiredWithoutTracksNestedInput
@@ -15783,6 +15827,8 @@ export namespace Prisma {
     album?: NullableStringFieldUpdateOperationsInput | string | null
     artworkUrl?: NullableStringFieldUpdateOperationsInput | string | null
     durationSeconds?: IntFieldUpdateOperationsInput | number
+    streamUrl?: NullableStringFieldUpdateOperationsInput | string | null
+    genre?: NullableStringFieldUpdateOperationsInput | string | null
     artistId?: StringFieldUpdateOperationsInput | string
     audioFeatures?: NullableJsonNullValueInput | InputJsonValue
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -15797,6 +15843,8 @@ export namespace Prisma {
     album?: string | null
     artworkUrl?: string | null
     durationSeconds: number
+    streamUrl?: string | null
+    genre?: string | null
     artistId: string
     audioFeatures?: NullableJsonNullValueInput | InputJsonValue
     createdAt?: Date | string
@@ -15809,6 +15857,8 @@ export namespace Prisma {
     album?: NullableStringFieldUpdateOperationsInput | string | null
     artworkUrl?: NullableStringFieldUpdateOperationsInput | string | null
     durationSeconds?: IntFieldUpdateOperationsInput | number
+    streamUrl?: NullableStringFieldUpdateOperationsInput | string | null
+    genre?: NullableStringFieldUpdateOperationsInput | string | null
     audioFeatures?: NullableJsonNullValueInput | InputJsonValue
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
@@ -15820,6 +15870,8 @@ export namespace Prisma {
     album?: NullableStringFieldUpdateOperationsInput | string | null
     artworkUrl?: NullableStringFieldUpdateOperationsInput | string | null
     durationSeconds?: IntFieldUpdateOperationsInput | number
+    streamUrl?: NullableStringFieldUpdateOperationsInput | string | null
+    genre?: NullableStringFieldUpdateOperationsInput | string | null
     artistId?: StringFieldUpdateOperationsInput | string
     audioFeatures?: NullableJsonNullValueInput | InputJsonValue
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -16740,6 +16792,8 @@ export namespace Prisma {
     album?: SortOrder
     artworkUrl?: SortOrder
     durationSeconds?: SortOrder
+    streamUrl?: SortOrder
+    genre?: SortOrder
     artistId?: SortOrder
     audioFeatures?: SortOrder
     createdAt?: SortOrder
@@ -16756,6 +16810,8 @@ export namespace Prisma {
     album?: SortOrder
     artworkUrl?: SortOrder
     durationSeconds?: SortOrder
+    streamUrl?: SortOrder
+    genre?: SortOrder
     artistId?: SortOrder
     createdAt?: SortOrder
   }
@@ -16767,6 +16823,8 @@ export namespace Prisma {
     album?: SortOrder
     artworkUrl?: SortOrder
     durationSeconds?: SortOrder
+    streamUrl?: SortOrder
+    genre?: SortOrder
     artistId?: SortOrder
     createdAt?: SortOrder
   }
@@ -18568,6 +18626,8 @@ export namespace Prisma {
     album?: string | null
     artworkUrl?: string | null
     durationSeconds: number
+    streamUrl?: string | null
+    genre?: string | null
     audioFeatures?: NullableJsonNullValueInput | InputJsonValue
     createdAt?: Date | string
     playlistTracks?: PlaylistTrackCreateNestedManyWithoutTrackInput
@@ -18581,6 +18641,8 @@ export namespace Prisma {
     album?: string | null
     artworkUrl?: string | null
     durationSeconds: number
+    streamUrl?: string | null
+    genre?: string | null
     audioFeatures?: NullableJsonNullValueInput | InputJsonValue
     createdAt?: Date | string
     playlistTracks?: PlaylistTrackUncheckedCreateNestedManyWithoutTrackInput
@@ -18643,6 +18705,8 @@ export namespace Prisma {
     album?: StringNullableFilter<"Track"> | string | null
     artworkUrl?: StringNullableFilter<"Track"> | string | null
     durationSeconds?: IntFilter<"Track"> | number
+    streamUrl?: StringNullableFilter<"Track"> | string | null
+    genre?: StringNullableFilter<"Track"> | string | null
     artistId?: UuidFilter<"Track"> | string
     audioFeatures?: JsonNullableFilter<"Track">
     createdAt?: DateTimeFilter<"Track"> | Date | string
@@ -18958,6 +19022,8 @@ export namespace Prisma {
     album?: string | null
     artworkUrl?: string | null
     durationSeconds: number
+    streamUrl?: string | null
+    genre?: string | null
     audioFeatures?: NullableJsonNullValueInput | InputJsonValue
     createdAt?: Date | string
     artist: ArtistCreateNestedOneWithoutTracksInput
@@ -18971,6 +19037,8 @@ export namespace Prisma {
     album?: string | null
     artworkUrl?: string | null
     durationSeconds: number
+    streamUrl?: string | null
+    genre?: string | null
     artistId: string
     audioFeatures?: NullableJsonNullValueInput | InputJsonValue
     createdAt?: Date | string
@@ -19035,6 +19103,8 @@ export namespace Prisma {
     album?: NullableStringFieldUpdateOperationsInput | string | null
     artworkUrl?: NullableStringFieldUpdateOperationsInput | string | null
     durationSeconds?: IntFieldUpdateOperationsInput | number
+    streamUrl?: NullableStringFieldUpdateOperationsInput | string | null
+    genre?: NullableStringFieldUpdateOperationsInput | string | null
     audioFeatures?: NullableJsonNullValueInput | InputJsonValue
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     artist?: ArtistUpdateOneRequiredWithoutTracksNestedInput
@@ -19048,6 +19118,8 @@ export namespace Prisma {
     album?: NullableStringFieldUpdateOperationsInput | string | null
     artworkUrl?: NullableStringFieldUpdateOperationsInput | string | null
     durationSeconds?: IntFieldUpdateOperationsInput | number
+    streamUrl?: NullableStringFieldUpdateOperationsInput | string | null
+    genre?: NullableStringFieldUpdateOperationsInput | string | null
     artistId?: StringFieldUpdateOperationsInput | string
     audioFeatures?: NullableJsonNullValueInput | InputJsonValue
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -19172,6 +19244,8 @@ export namespace Prisma {
     album?: string | null
     artworkUrl?: string | null
     durationSeconds: number
+    streamUrl?: string | null
+    genre?: string | null
     audioFeatures?: NullableJsonNullValueInput | InputJsonValue
     createdAt?: Date | string
     artist: ArtistCreateNestedOneWithoutTracksInput
@@ -19185,6 +19259,8 @@ export namespace Prisma {
     album?: string | null
     artworkUrl?: string | null
     durationSeconds: number
+    streamUrl?: string | null
+    genre?: string | null
     artistId: string
     audioFeatures?: NullableJsonNullValueInput | InputJsonValue
     createdAt?: Date | string
@@ -19255,6 +19331,8 @@ export namespace Prisma {
     album?: NullableStringFieldUpdateOperationsInput | string | null
     artworkUrl?: NullableStringFieldUpdateOperationsInput | string | null
     durationSeconds?: IntFieldUpdateOperationsInput | number
+    streamUrl?: NullableStringFieldUpdateOperationsInput | string | null
+    genre?: NullableStringFieldUpdateOperationsInput | string | null
     audioFeatures?: NullableJsonNullValueInput | InputJsonValue
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     artist?: ArtistUpdateOneRequiredWithoutTracksNestedInput
@@ -19268,6 +19346,8 @@ export namespace Prisma {
     album?: NullableStringFieldUpdateOperationsInput | string | null
     artworkUrl?: NullableStringFieldUpdateOperationsInput | string | null
     durationSeconds?: IntFieldUpdateOperationsInput | number
+    streamUrl?: NullableStringFieldUpdateOperationsInput | string | null
+    genre?: NullableStringFieldUpdateOperationsInput | string | null
     artistId?: StringFieldUpdateOperationsInput | string
     audioFeatures?: NullableJsonNullValueInput | InputJsonValue
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -19915,6 +19995,8 @@ export namespace Prisma {
     album?: string | null
     artworkUrl?: string | null
     durationSeconds: number
+    streamUrl?: string | null
+    genre?: string | null
     audioFeatures?: NullableJsonNullValueInput | InputJsonValue
     createdAt?: Date | string
   }
@@ -19931,6 +20013,8 @@ export namespace Prisma {
     album?: NullableStringFieldUpdateOperationsInput | string | null
     artworkUrl?: NullableStringFieldUpdateOperationsInput | string | null
     durationSeconds?: IntFieldUpdateOperationsInput | number
+    streamUrl?: NullableStringFieldUpdateOperationsInput | string | null
+    genre?: NullableStringFieldUpdateOperationsInput | string | null
     audioFeatures?: NullableJsonNullValueInput | InputJsonValue
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     playlistTracks?: PlaylistTrackUpdateManyWithoutTrackNestedInput
@@ -19944,6 +20028,8 @@ export namespace Prisma {
     album?: NullableStringFieldUpdateOperationsInput | string | null
     artworkUrl?: NullableStringFieldUpdateOperationsInput | string | null
     durationSeconds?: IntFieldUpdateOperationsInput | number
+    streamUrl?: NullableStringFieldUpdateOperationsInput | string | null
+    genre?: NullableStringFieldUpdateOperationsInput | string | null
     audioFeatures?: NullableJsonNullValueInput | InputJsonValue
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     playlistTracks?: PlaylistTrackUncheckedUpdateManyWithoutTrackNestedInput
@@ -19957,6 +20043,8 @@ export namespace Prisma {
     album?: NullableStringFieldUpdateOperationsInput | string | null
     artworkUrl?: NullableStringFieldUpdateOperationsInput | string | null
     durationSeconds?: IntFieldUpdateOperationsInput | number
+    streamUrl?: NullableStringFieldUpdateOperationsInput | string | null
+    genre?: NullableStringFieldUpdateOperationsInput | string | null
     audioFeatures?: NullableJsonNullValueInput | InputJsonValue
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }

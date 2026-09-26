@@ -179,6 +179,83 @@ button:focus-visible, input:focus-visible { outline: 2px solid #c8b5ff; outline-
 @media (max-width: 760px) {.app-shell{display:block;padding-bottom:142px}.sidebar{display:none}.main-area{padding:0 17px 15px}.topbar{height:72px}.mobile-brand{display:flex;font-size:14px}.mobile-brand .brand-mark{width:27px;height:27px}.global-search{margin-left:auto;width:auto;max-width:177px;padding:9px}.global-search input{font-size:10px}.global-search kbd,.top-actions .icon-button{display:none}.top-actions{gap:0}.top-actions .avatar{width:31px;height:31px}.hero-grid{grid-template-columns:1fr;gap:25px;padding-top:31px}.hero-copy h1,.page-intro h1,.roulette-page h1{font-size:48px}.hero-visual{height:300px}.hero-disc{width:190px}.mini-stats{grid-template-columns:1fr;margin:18px 0 44px}.mini-stats>div{min-height:61px}.mini-stats>div:nth-child(3){display:none}.playlist-rail{grid-template-columns:repeat(2,1fr)}.album-card:nth-child(n+3){display:none}.section-block{margin-bottom:43px}.section-heading h2{font-size:19px}.split-section{margin-bottom:43px}.mood-module{padding:18px}.mood-chip{padding:7px}.humming-card{min-height:174px}.track-row{grid-template-columns:21px 39px 1fr 30px;gap:8px}.track-tags,.track-duration{display:none}.track-row .subtle{display:grid}.page-intro{padding:35px 0 27px}.page-intro>p:last-child{font-size:11px}.search-hero{padding:14px}.library-grid{grid-template-columns:repeat(2,1fr)}.library-tabs{overflow:auto;padding-bottom:3px}.library-tabs button{flex:0 0 auto}.dj-layout,.globe-layout,.song-details,.profile-grid,.travel-builder{grid-template-columns:1fr}.dj-chat{min-height:560px;padding-inline:17px}.dj-queue{order:-1}.mood-wall{grid-template-columns:repeat(2,1fr)}.mood-card{min-height:140px}.mood-reveal{grid-template-columns:1fr;padding:23px;gap:10px}.mood-reveal-art{justify-self:center;transform:scale(.85);margin:-10px 0}.globe-stage{min-height:335px}.globe{width:215px;height:215px}.country-card{padding:23px}.weather-grid{grid-template-columns:1fr}.weather-card{min-height:190px}.weather-card .eyebrow{margin-top:22px}.weather-now{align-items:start;padding:15px}.weather-now button{display:none}.roulette-page{min-height:620px;padding-top:62px}.roulette-orbit{width:450px}.travel-options,.route-preview{padding:23px}.artist-feature{grid-template-columns:1fr;padding:19px}.artist-portrait{min-height:185px}.growth-graph{grid-column:auto;height:180px}.artist-events>div{grid-template-columns:1fr}.settings-card{padding-inline:17px}.song-hero{grid-template-columns:1fr;gap:26px;padding-top:25px}.song-hero>.artwork{width:80%;max-width:260px}.lyrics-panel,.story-panel{padding:20px}.profile-hero{flex-wrap:wrap}.profile-hero>button{margin-left:108px}.profile-stats{grid-template-columns:repeat(2,1fr)}.profile-stats div:nth-child(2){border-right:0}.profile-stats div:nth-child(-n+2){border-bottom:1px solid rgba(255,255,255,.09)}.profile-grid article{min-height:220px}.player-bar{left:0;height:70px;padding:9px 14px;grid-template-columns:1fr auto}.player-center{display:none}.player-tools{display:none}.player-track .like-button{margin-left:auto}.mobile-nav{position:fixed;z-index:9;bottom:70px;left:0;right:0;height:60px;display:grid;grid-template-columns:repeat(4,1fr);border-top:1px solid rgba(255,255,255,.08);background:rgba(15,11,26,.94);backdrop-filter:blur(18px)}.mobile-nav button{display:grid;place-content:center;justify-items:center;gap:3px;border:0;color:#90889a;background:transparent;font-size:8px}.mobile-nav button.active{color:#d9c7ff}.toast{bottom:145px;width:max-content;max-width:88%}.music-hero{min-height:850px;grid-template-columns:1fr;padding-top:75px}.hero-copy{text-align:center;margin:0 auto}.hero-description{margin-left:auto;margin-right:auto}.headphone-scene{min-height:430px;margin-top:-10px}.hero-copy h1{font-size:clamp(4rem,18vw,6.5rem)}.hero-footer{justify-content:center}}
 
 @media (max-width:760px){.public-nav{padding:21px 18px}.public-nav .brand{font-size:14px}.public-nav .brand-mark{width:27px;height:27px}.public-nav>div{gap:11px}.public-nav .gradient-button{min-width:auto;padding:10px 11px;font-size:9px}.public-hero{width:auto;margin:79px 20px 0}.public-hero h1{font-size:62px}.public-hero>p:not(.eyebrow){font-size:11px}.public-hero>div:nth-of-type(1){display:grid;justify-items:start;gap:18px}.public-proof{margin-top:34px;gap:18px}.public-record{right:-42%;top:51%;width:370px;opacity:.74}.public-features{grid-template-columns:1fr;margin:130px 18px 0}.public-features article{min-height:138px}.public-footer{margin:0 18px;padding:19px 0;font-size:7px}.public-footer span:nth-child(2){display:none}.auth-shell{display:block;padding:20px 18px 36px}.auth-brand{position:relative;top:auto;left:auto}.auth-card{width:100%;max-width:430px;margin:55px auto 0;padding:37px 24px}.auth-art{display:none}.auth-aurora{width:510px;left:-300px}.auth-card h1{font-size:45px}}
+
+/* Readability: keep display type as designed, while raising metadata and control text. */
+.eyebrow,
+.nav-caption,
+.hero-visual-copy span,
+.album-number,
+.mood-now p span,
+.track-number,
+.track-duration,
+.track-copy span,
+.track-tags span,
+.search-chips button,
+.library-tabs button,
+.tile-kicker,
+.library-tile p,
+.settings-card p,
+.setting-row p,
+.weather-now span,
+.artist-events small,
+.profile-stats span,
+.heatmap-key,
+.progress-row,
+.public-footer,
+.auth-divider {
+  font-size: 11px;
+}
+
+.profile-summary strong,
+.profile-summary small,
+.tiny-player b,
+.tiny-player small,
+.global-search input,
+.global-search kbd,
+.gradient-button,
+.text-button,
+.hero-social,
+.hero-visual-copy button,
+.mini-stats b,
+.mini-stats small,
+.album-card p,
+.mood-chip,
+.mood-now p b,
+.humming-card > p:not(.eyebrow),
+.humming-cta,
+.track-copy strong,
+.page-intro > p:last-child,
+.empty-state p,
+.story-panel > p:not(.eyebrow),
+.explain b,
+.explain p,
+.profile-hero p:not(.eyebrow),
+.profile-hero > button,
+.player-track strong,
+.player-track span,
+.toast,
+.public-login,
+.public-text-button,
+.public-proof,
+.public-features p,
+.auth-copy,
+.auth-card label,
+.auth-card input,
+.social-auth,
+.auth-switch,
+.mobile-nav button {
+  font-size: 12px;
+}
+
+@media (max-width: 760px) {
+  .global-search input,
+  .page-intro > p:last-child,
+  .mobile-nav button,
+  .public-nav .gradient-button,
+  .public-footer {
+    font-size: 11px;
+  }
+}
 @media (max-width: 410px) {.hero-copy h1,.page-intro h1{font-size:43px}.hero-social{gap:14px}.hero-visual{height:270px}.mood-strip{max-height:73px;overflow:hidden}.mood-card{padding:12px}.mood-card small{display:none}.profile-hero>button{margin-left:0}.global-search{max-width:133px}}
 
 

@@ -9,3 +9,5 @@ BACKEND/.env
 
 # Dependencies are installed per environment; never commit platform-specific binaries.
 node_modules/
+
+node_modules/

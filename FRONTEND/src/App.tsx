@@ -1,6 +1,7 @@
 import { useEffect, useMemo, useRef, useState, type ComponentType } from 'react'
+import type { Session } from '@supabase/supabase-js'
 import { supabase } from './lib/supabase'
-import { getMoodRecommendations, getRouletteTrack, getTrendingTracks, getTravelPlaylist, getWeatherMix, recordHistory, searchMusic } from './lib/api'
+import { addTrackToPlaylist, createPlaylist, getArtist, getGlobeCountry, getLibrary, getMoodRecommendations, getProfile, getRouletteTrack, getTrackedArtists, getTrendingTracks, getTravelPlaylist, getWeatherMix, recordHistory, saveTrack, searchMusic, trackArtist, untrackArtist, type LibraryData, type ProfileData } from './lib/api'
 import { AnimatePresence, motion } from 'framer-motion'
 import {
   ArrowUpRight,
@@ -94,7 +95,7 @@ function Heading({ eyebrow, title, action }: { eyebrow?: string; title: string; 
   </div>
 }
 
-function TrackRow({ song, index, onOpen, onPlay }: { song: Song; index: number; onOpen: () => void; onPlay: () => void }) {
+function TrackRow({ song, index, onOpen, onPlay, onSave }: { song: Song; index: number; onOpen: () => void; onPlay: () => void; onSave?: () => void }) {
   return (
     <div className="track-row">
       <span className="track-number">{String(index + 1).padStart(2, '0')}</span>
@@ -103,7 +104,7 @@ function TrackRow({ song, index, onOpen, onPlay }: { song: Song; index: number; 
         <strong>{song.title}</strong><span>{song.artist} <b>•</b> {song.album}</span>
       </button>
       <div className="track-tags">{song.tags.map((tag) => <span key={tag}>{tag}</span>)}</div>
-      <button className="icon-button subtle" aria-label={`More options for ${song.title}`}><MoreHorizontal size={18} /></button>
+      {onSave ? <button className="icon-button subtle" onClick={onSave} aria-label={`Save ${song.title}`}><Heart size={18} /></button> : <button className="icon-button subtle" aria-label={`More options for ${song.title}`}><MoreHorizontal size={18} /></button>}
       <span className="track-duration">{song.duration}</span>
     </div>
   )
@@ -111,6 +112,8 @@ function TrackRow({ song, index, onOpen, onPlay }: { song: Song; index: number; 
 
 function App() {
   const [page, setPage] = useState<Page>('Landing')
+  const [session, setSession] = useState<Session | null>(null)
+  const [authReady, setAuthReady] = useState(false)
   const [playing, setPlaying] = useState(false)
   const [selectedSong, setSelectedSong] = useState<Song | null>(null)
   const [homeTracks, setHomeTracks] = useState<Song[]>([])
@@ -141,6 +144,23 @@ function App() {
   ])
   const [message, setMessage] = useState('')
   const [notice, setNotice] = useState<string | null>(null)
+
+  useEffect(() => {
+    supabase.auth.getSession().then(({ data }) => {
+      setSession(data.session)
+      if (data.session) setPage('Home')
+      setAuthReady(true)
+    })
+    const { data: listener } = supabase.auth.onAuthStateChange((event, nextSession) => {
+      setSession(nextSession)
+      if (event === 'SIGNED_IN' && nextSession) setPage('Home')
+    })
+    return () => listener.subscription.unsubscribe()
+  }, [])
+
+  useEffect(() => {
+    if (authReady && !session && !['Landing', 'Login', 'Signup'].includes(page)) setPage('Login')
+  }, [authReady, page, session])
 
   const visibleSongs = useMemo(() => {
     const query = search.trim().toLowerCase()
@@ -217,6 +237,31 @@ function App() {
     window.setTimeout(() => setNotice(null), 2200)
   }
 
+  const saveSong = (song: Song) => {
+    if (!session) {
+      setNotice('Log in to save music to your library.')
+      setPage('Login')
+      return
+    }
+    void saveTrack(song)
+      .then(() => setNotice(`${song.title} saved to your library.`))
+      .catch((error: unknown) => setNotice(error instanceof Error ? error.message : 'Unable to save this track.'))
+  }
+
+  const signOut = () => {
+    void supabase.auth.signOut().then(() => {
+      setPage('Landing')
+      setNotice('You have been signed out.')
+    })
+  }
+
+  const followArtist = (song: Song) => {
+    if (!song.artistId) return setNotice('Artist tracking is available for live Audius tracks.')
+    void trackArtist({ id: song.artistId, name: song.artist })
+      .then(() => setNotice(`${song.artist} added to your artist tracker.`))
+      .catch((error: unknown) => setNotice(error instanceof Error ? error.message : 'Unable to track this artist.'))
+  }
+
   const chooseMood = (mood: typeof moods[number]) => {
     setSelectedMood(mood)
     setFeatureStatus('Finding real tracks for this mood…')
@@ -239,13 +284,17 @@ function App() {
     if (roulette.spinning) return
     setRoulette((state) => ({ ...state, spinning: true }))
     getRouletteTrack()
-      .then((track) => { setRouletteSong(track); setRoulette({ spinning: false, result: `${track.artist} — ${track.title}` }) })
+      .then(({ track, route }) => { setRouletteSong(track); setRoulette({ spinning: false, result: route }) })
       .catch(() => { setRoulette((state) => ({ ...state, spinning: false })); setFeatureStatus('Unable to find a Roulette track. Please try again.') })
   }
+
+  if (!authReady) return null
 
   if (page === 'Landing' || page === 'Login' || page === 'Signup') {
     return <PublicView page={page} onPage={setPage} />
   }
+
+  if (!session) return <PublicView page="Login" onPage={setPage} />
 
   return (
     <main className="app-shell" style={{ '--mood-color': selectedMood.color } as React.CSSProperties}>
@@ -269,7 +318,7 @@ function App() {
           })}
         </nav>
           <div className="sidebar-bottom">
-          <button className="profile-summary" onClick={() => setPage('Profile')}><span className="avatar avatar-small">SK</span><span><strong>Sahas</strong><small>Listener level 19</small></span><ChevronRight size={16} /></button>
+          <button className="profile-summary" onClick={() => setPage('Profile')}><span className="avatar avatar-small">{session.user.email?.slice(0, 2).toUpperCase() ?? 'AU'}</span><span><strong>{session.user.user_metadata.name ?? session.user.email?.split('@')[0] ?? 'Listener'}</strong><small>Your AURAL library</small></span><ChevronRight size={16} /></button>
           {selectedSong && <div className="tiny-player"><button onClick={() => setPlaying(!playing)} aria-label="Toggle mini player">{playing ? <Pause size={14} /> : <Play size={14} fill="currentColor" />}</button><span><b>{selectedSong.title}</b><small>{selectedSong.artist}</small></span><Equalizer active={playing} /></div>}
         </div>
       </aside>
@@ -285,17 +334,17 @@ function App() {
           <motion.div key={page} initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -8 }} transition={{ duration: 0.28 }} className="page-content">
             {page === 'Home' && <HomeView tracks={homeTracks} status={homeStatus} onPage={setPage} onPlay={playSong} onOpen={openSong} selectedMood={selectedMood} onMood={chooseMood} />}
             {page === 'Search' && <SearchView query={search} songs={searchResults ?? visibleSongs} loading={searchStatus === 'loading'} unavailable={searchStatus === 'error'} onOpen={openSong} onPlay={playSong} />}
-            {page === 'Library' && <LibraryView onOpen={openSong} onPlay={playSong} />}
+            {page === 'Library' && <LibraryView onOpen={openSong} onPlay={playSong} onSave={saveSong} />}
             {page === 'AI DJ' && <DjView chat={chat} message={message} setMessage={setMessage} onSend={sendMessage} onPlay={playSong} />}
             {page === 'Mood Discovery' && <MoodView tracks={moodTracks} status={featureStatus} selectedMood={selectedMood} onMood={chooseMood} onPlay={playSong} />}
-            {page === 'Music Globe' && <GlobeView selected={selectedCountry} setSelected={setSelectedCountry} onPlay={playSong} />}
+            {page === 'Music Globe' && <GlobeView selected={selectedCountry} setSelected={setSelectedCountry} onPlay={playSong} onOpen={openSong} />}
             {page === 'Weather Mix' && <WeatherView tracks={weatherTracks} summary={weatherSummary} setTracks={setWeatherTracks} setSummary={setWeatherSummary} onPlay={playSong} />}
             {page === 'Roulette' && <RouletteView song={rouletteSong} roulette={roulette} onSpin={spinRoulette} onPlay={playSong} />}
             {page === 'Travel Playlist' && <TravelView tracks={travelTracks} setTracks={setTravelTracks} travel={travel} setTravel={setTravel} hours={hours} setHours={setHours} onPlay={playSong} />}
             {page === 'Artist Tracker' && <ArtistView onPlay={playSong} />}
             {page === 'Settings' && <SettingsView />}
-            {page === 'Song Details' && selectedSong && <SongView song={selectedSong} onBack={() => setPage('Home')} onPlay={() => setPlaying(!playing)} />}
-            {page === 'Profile' && <ProfileView onPage={setPage} />}
+            {page === 'Song Details' && selectedSong && <SongView song={selectedSong} onBack={() => setPage('Home')} onPlay={() => setPlaying(!playing)} onSave={() => saveSong(selectedSong)} onTrackArtist={() => followArtist(selectedSong)} />}
+            {page === 'Profile' && <ProfileView onPage={setPage} onSignOut={signOut} />}
           </motion.div>
         </AnimatePresence>
       </section>
@@ -336,6 +385,18 @@ function PublicView({ page, onPage }: { page: 'Landing' | 'Login' | 'Signup'; on
   }
 
   const isSignup = page === 'Signup'
+  const [googleLoading, setGoogleLoading] = useState(false)
+  const signInWithGoogle = async () => {
+    setGoogleLoading(true)
+    const { error } = await supabase.auth.signInWithOAuth({
+      provider: 'google',
+      options: { redirectTo: `${window.location.origin}/` },
+    })
+    if (error) {
+      setGoogleLoading(false)
+      alert(error.message)
+    }
+  }
   return <main className="auth-shell"><button className="brand auth-brand" onClick={() => onPage('Landing')}><span className="brand-mark"><Waves size={21} /></span><span>AURAL</span></button><div className="auth-aurora" /><section className="auth-card"><button className="auth-back" onClick={() => onPage('Landing')}><ChevronRight size={15} /> Back</button><p className="eyebrow">{isSignup ? 'YOUR SOUND MAP STARTS HERE' : 'WELCOME BACK TO AURAL'}</p><h1>{isSignup ? <>Hear<br /><em>beyond.</em></> : <>Good to have<br /><em>you back.</em></>}</h1><p className="auth-copy">{isSignup ? 'A few details and we’ll start learning the music that moves with you.' : 'Your late-night drives, tiny rituals, and new discoveries are waiting.'}</p><form
   onSubmit={async (event) => {
     event.preventDefault()
@@ -423,7 +484,7 @@ function PublicView({ page, onPage }: { page: 'Landing' | 'Login' | 'Signup'; on
     {isSignup ? 'Create my AURAL' : 'Enter AURAL'}
     <ArrowUpRight size={15} />
   </GradientButton>
-</form><div className="auth-divider"><span />or continue with<span /></div><button className="social-auth">G <span>Continue with Google</span></button><p className="auth-switch">{isSignup ? 'Already listening?' : 'New to AURAL?'} <button onClick={() => onPage(isSignup ? 'Login' : 'Signup')}>{isSignup ? 'Log in' : 'Create your account'}</button></p></section><div className="auth-art"><div className="auth-disc"><span>✦</span></div><p>YOUR NEXT<br />FAVOURITE IS<br />CLOSER THAN<br />YOU THINK.</p><i>01 / 03</i></div></main>
+</form><div className="auth-divider"><span />or continue with<span /></div><button className="social-auth" type="button" onClick={() => void signInWithGoogle()} disabled={googleLoading}>G <span>{googleLoading ? 'Opening Google…' : 'Continue with Google'}</span></button><p className="auth-switch">{isSignup ? 'Already listening?' : 'New to AURAL?'} <button onClick={() => onPage(isSignup ? 'Login' : 'Signup')}>{isSignup ? 'Log in' : 'Create your account'}</button></p></section><div className="auth-art"><div className="auth-disc"><span>✦</span></div><p>YOUR NEXT<br />FAVOURITE IS<br />CLOSER THAN<br />YOU THINK.</p><i>01 / 03</i></div></main>
 }
 
 function HomeView({ tracks, status, onPage, onPlay, onOpen, selectedMood, onMood }: { tracks: Song[]; status: 'loading' | 'ready' | 'error'; onPage: (page: Page) => void; onPlay: (song: Song) => void; onOpen: (song: Song) => void; selectedMood: typeof moods[number]; onMood: (mood: typeof moods[number]) => void }) {
@@ -450,9 +511,19 @@ function SearchView({ query, songs: foundSongs, loading, unavailable, onOpen, on
   return <><div className="page-intro"><p className="eyebrow">DISCOVER WITHOUT BOUNDARIES</p><h1>What are you looking<br />to <em>feel?</em></h1><p>{pageDescriptions.Search}</p></div><div className="search-hero"><Search size={20} /><input autoFocus value={query} placeholder="Try “rainy indie from Seoul”" readOnly /><button><Mic2 size={18} /></button></div><div className="search-chips">{suggestions.map((item) => <button key={item}>⌁ {item}</button>)}</div><section className="search-results"><Heading title={query ? `Results for “${query}”` : 'A few places to begin'} />{loading ? <div className="empty-state"><Sparkles size={24} /><h3>Searching the AURAL signal…</h3></div> : foundSongs.length ? <div className="track-list">{foundSongs.map((song, index) => <TrackRow key={song.id} song={song} index={index} onOpen={() => onOpen(song)} onPlay={() => onPlay(song)} />)}</div> : <div className="empty-state"><Sparkles size={24} /><h3>{unavailable ? 'Live search is temporarily unavailable.' : 'No exact matches — but you just made a great prompt.'}</h3><p>Ask AI DJ to make it more emotional, geographic, nostalgic, or specific.</p></div>}</section></>
 }
 
-function LibraryView({ onOpen, onPlay }: { onOpen: (song: Song) => void; onPlay: (song: Song) => void }) {
-  const shelves = [['Liked Songs', '241 songs', 'heart-sleeve'], ['AI aftercare', '42 songs', 'pink-grid'], ['Slow mornings', '67 songs', 'sunset-drive'], ['Window seat', '31 songs', 'blue-waves']]
-  return <><div className="page-intro compact-intro"><p className="eyebrow">YOUR COLLECTION</p><h1>Library</h1><p>Everything you’ve saved, made, and found along the way.</p></div><section className="library-tabs"><button className="active">Playlists</button><button>Liked songs</button><button>Downloads</button><button>Recently played</button></section><div className="library-grid">{shelves.map(([name, amount, art], index) => <article key={name} className="library-tile"><div className={`artwork art-${art}`}><span /></div><div><span className="tile-kicker">{index === 0 ? 'YOUR FAVOURITES' : 'AURAL PLAYLIST'}</span><h3>{name}</h3><p>{amount}</p></div><button onClick={() => onPlay(songs[index])}><Play size={16} fill="currentColor" /></button></article>)}</div><section className="section-block"><Heading title="Recently added" /><div className="track-list">{songs.slice(2).map((song, index) => <TrackRow key={song.title} song={song} index={index} onOpen={() => onOpen(song)} onPlay={() => onPlay(song)} />)}</div></section></>
+function LibraryView({ onOpen, onPlay, onSave }: { onOpen: (song: Song) => void; onPlay: (song: Song) => void; onSave: (song: Song) => void }) {
+  const [library, setLibrary] = useState<LibraryData | null>(null)
+  const [status, setStatus] = useState<'loading' | 'error' | 'ready'>('loading')
+  const [tab, setTab] = useState<'playlists' | 'favorites' | 'history'>('playlists')
+
+  useEffect(() => {
+    let active = true
+    getLibrary().then((data) => { if (active) { setLibrary(data); setStatus('ready') } }).catch(() => { if (active) setStatus('error') })
+    return () => { active = false }
+  }, [])
+
+  const tracks = tab === 'favorites' ? library?.favorites ?? [] : library?.history ?? []
+  return <><div className="page-intro compact-intro"><p className="eyebrow">YOUR COLLECTION</p><h1>Library</h1><p>Everything you’ve saved, made, and found along the way.</p></div><section className="library-tabs"><button className={tab === 'playlists' ? 'active' : ''} onClick={() => setTab('playlists')}>Playlists</button><button className={tab === 'favorites' ? 'active' : ''} onClick={() => setTab('favorites')}>Liked songs</button><button className={tab === 'history' ? 'active' : ''} onClick={() => setTab('history')}>Recently played</button></section>{status === 'loading' && <div className="empty-state"><Sparkles size={24} /><h3>Loading your library…</h3></div>}{status === 'error' && <div className="empty-state"><Sparkles size={24} /><h3>We couldn’t load your library.</h3><p>Check that the API and database are running, then try again.</p></div>}{status === 'ready' && tab === 'playlists' && <div className="library-grid">{library?.playlists.length ? library.playlists.map((playlist, index) => <article key={playlist.id} className="library-tile"><div className={`artwork art-${songs[index % songs.length].art}`}><span /></div><div><span className="tile-kicker">{playlist.description || 'AURAL PLAYLIST'}</span><h3>{playlist.title}</h3><p>{playlist._count.tracks} songs</p></div></article>) : <div className="empty-state"><h3>No playlists yet.</h3><p>Your first saved playlist will appear here.</p></div>}</div>}{status === 'ready' && tab !== 'playlists' && <section className="section-block"><Heading title={tab === 'favorites' ? 'Liked songs' : 'Recently played'} />{tracks.length ? <div className="track-list">{tracks.map((song, index) => <TrackRow key={`${song.id}-${index}`} song={song} index={index} onOpen={() => onOpen(song)} onPlay={() => onPlay(song)} onSave={tab === 'history' ? () => onSave(song) : undefined} />)}</div> : <div className="empty-state"><h3>{tab === 'favorites' ? 'No liked songs yet.' : 'Nothing played yet.'}</h3><p>{tab === 'favorites' ? 'Use the heart button on any track to save it here.' : 'Play a track and it will appear in your listening history.'}</p></div>}</section>}</>
 }
 
 function DjView({ chat, message, setMessage, onSend, onPlay }: { chat: { from: string; text: string }[]; message: string; setMessage: (text: string) => void; onSend: () => void; onPlay: (song: Song) => void }) {
@@ -463,9 +534,17 @@ function MoodView({ tracks, status, selectedMood, onMood, onPlay }: { tracks: So
   return <><div className="page-intro"><p className="eyebrow">EMOTION-LED DISCOVERY</p><h1>Pick a feeling.<br /><em>Find its sound.</em></h1><p>Choosing a mood recalibrates AURAL’s palette, recommendations, and the energy of the room.</p></div><div className="mood-wall">{moods.map((mood, index) => <motion.button layout onClick={() => onMood(mood)} className={selectedMood.label === mood.label ? 'mood-card selected' : 'mood-card'} style={{ '--mood': mood.color } as React.CSSProperties} key={mood.label} whileHover={{ y: -5 }}><span>{mood.emoji}</span><strong>{mood.label}</strong><small>{mood.note}</small><i>0{index + 1}</i></motion.button>)}</div><section className="mood-reveal"><div><span className="eyebrow">YOUR {selectedMood.label.toUpperCase()} MIX</span><h2>New music<br />for this exact shade.</h2><p>{status || `${selectedMood.note}. Choose a mood to receive live Audius recommendations.`}</p>{tracks[0] && <GradientButton onClick={() => onPlay(tracks[0])}><Play size={16} fill="currentColor" /> Play your mix</GradientButton>}<div className="track-list">{tracks.slice(0, 3).map((song, index) => <TrackRow key={song.id} song={song} index={index} onOpen={() => undefined} onPlay={() => onPlay(song)} />)}</div></div>{tracks[0] && <div className="mood-reveal-art"><Artwork song={tracks[0]} />{tracks[1] && <Artwork song={tracks[1]} compact />}<div className="mood-wave"><i /><i /><i /><i /><i /><i /><i /></div></div>}</section></>
 }
 
-function GlobeView({ selected, setSelected, onPlay }: { selected: keyof typeof countryData; setSelected: (country: keyof typeof countryData) => void; onPlay: (song: Song) => void }) {
+function GlobeView({ selected, setSelected, onPlay, onOpen }: { selected: keyof typeof countryData; setSelected: (country: keyof typeof countryData) => void; onPlay: (song: Song) => void; onOpen: (song: Song) => void }) {
   const country = countryData[selected]
-  return <><div className="page-intro compact-intro"><p className="eyebrow">SOUND HAS NO BORDERS</p><h1>Music <em>Globe</em></h1><p>Spin the planet, find a local signal, and listen further than your algorithm usually travels.</p></div><section className="globe-layout"><div className="globe-stage"><div className="globe-glow" /><div className="globe-orbit orbit-a" /><div className="globe-orbit orbit-b" /><div className="globe"><div className="globe-continent continent-a" /><div className="globe-continent continent-b" /><div className="globe-lines" /><span className="globe-pin pin-india">✦</span><span className="globe-pin pin-japan">✦</span><span className="globe-pin pin-brazil">✦</span></div><p>DRAG TO EXPLORE <span>✦</span> SELECT A SIGNAL</p></div><aside className="country-card"><span className="country-flag">{country.flag}</span><p className="eyebrow">TRENDING FROM</p><h2>{country.city}</h2><div className="country-stat"><span>MONTHLY LISTENERS</span><strong>{country.listeners}</strong></div><p className="country-genre">{country.genre}</p><div className="artist-pills">{country.artists.map((artist) => <button key={artist}>{artist} <ArrowUpRight size={12} /></button>)}</div><button className="queue-play" onClick={() => onPlay(songs[4])}><Play size={16} fill="currentColor" /> Start listening locally</button></aside></section><div className="country-picker">{(Object.keys(countryData) as (keyof typeof countryData)[]).map((name) => <button className={selected === name ? 'active' : ''} onClick={() => setSelected(name)} key={name}>{countryData[name].flag} {name}</button>)}</div></>
+  const [tracks, setTracks] = useState<Song[]>([])
+  const [status, setStatus] = useState<'loading' | 'error' | 'ready'>('loading')
+  useEffect(() => {
+    let active = true
+    setStatus('loading')
+    getGlobeCountry(selected).then((data) => { if (active) { setTracks(data.tracks); setStatus('ready') } }).catch(() => { if (active) setStatus('error') })
+    return () => { active = false }
+  }, [selected])
+  return <><div className="page-intro compact-intro"><p className="eyebrow">SOUND HAS NO BORDERS</p><h1>Music <em>Globe</em></h1><p>Spin the planet, find a local signal, and listen further than your algorithm usually travels.</p></div><section className="globe-layout"><div className="globe-stage"><div className="globe-glow" /><div className="globe-orbit orbit-a" /><div className="globe-orbit orbit-b" /><div className="globe"><div className="globe-continent continent-a" /><div className="globe-continent continent-b" /><div className="globe-lines" /><span className="globe-pin pin-india">✦</span><span className="globe-pin pin-japan">✦</span><span className="globe-pin pin-brazil">✦</span></div><p>SELECT A SIGNAL</p></div><aside className="country-card"><span className="country-flag">{country.flag}</span><p className="eyebrow">TRENDING FROM</p><h2>{country.city}</h2><div className="country-stat"><span>MONTHLY LISTENERS</span><strong>{country.listeners}</strong></div><p className="country-genre">{country.genre}</p><div className="artist-pills">{country.artists.map((artist) => <button key={artist}>{artist} <ArrowUpRight size={12} /></button>)}</div><button className="queue-play" disabled={!tracks[0]} onClick={() => tracks[0] && onPlay(tracks[0])}><Play size={16} fill="currentColor" /> {status === 'loading' ? 'Finding local music…' : 'Start listening locally'}</button></aside></section><div className="country-picker">{(Object.keys(countryData) as (keyof typeof countryData)[]).map((name) => <button className={selected === name ? 'active' : ''} onClick={() => setSelected(name)} key={name}>{countryData[name].flag} {name}</button>)}</div><section className="section-block"><Heading title={`Live tracks from ${selected}`} />{status === 'error' ? <div className="empty-state"><h3>Local music is unavailable right now.</h3></div> : status === 'loading' ? <div className="empty-state"><h3>Tuning into the local signal…</h3></div> : <div className="track-list">{tracks.slice(0, 6).map((song, index) => <TrackRow key={song.id} song={song} index={index} onOpen={() => onOpen(song)} onPlay={() => onPlay(song)} />)}</div>}</section></>
 }
 
 function WeatherView({ tracks, summary, setTracks, setSummary, onPlay }: { tracks: Song[]; summary: string | null; setTracks: (tracks: Song[]) => void; setSummary: (summary: string | null) => void; onPlay: (song: Song) => void }) {
@@ -483,12 +562,30 @@ function TravelView({ tracks, setTracks, travel, setTravel, hours, setHours, onP
   const options = ['Road Trip', 'Flight', 'Train', 'Camping', 'Beach', 'Mountains', 'Night Drive']
   const [destination, setDestination] = useState('')
   const [loading, setLoading] = useState(false)
-  const generate = () => { if (!destination.trim()) return; setLoading(true); getTravelPlaylist(destination, travel, hours, travel).then((playlist) => setTracks(playlist.tracks)).finally(() => setLoading(false)) }
-  return <><div className="page-intro compact-intro"><p className="eyebrow">SCORE THE JOURNEY</p><h1>Travel playlists<br />that <em>move with you.</em></h1><p>Match the length, landscape, stops and energy curve of wherever you’re going.</p></div><div className="search-hero"><Map size={20} /><input value={destination} onChange={(event) => setDestination(event.target.value)} placeholder="Enter your destination" /><button onClick={generate}><ArrowUpRight size={18} /></button></div><section className="travel-builder"><div className="travel-options"><span className="eyebrow">WHAT’S THE TRIP?</span><div>{options.map((option) => <button className={travel === option ? 'active' : ''} onClick={() => setTravel(option)} key={option}>{option === 'Flight' ? '✈' : option === 'Train' ? '🚆' : option === 'Camping' ? '⛺' : option === 'Beach' ? '☀' : option === 'Mountains' ? '⛰' : option === 'Night Drive' ? '🌙' : '🚗'} {option}</button>)}</div><span className="eyebrow duration-label">HOW LONG?</span><div className="duration"><strong>{hours}h</strong><input type="range" min="1" max="12" value={hours} onChange={(event) => setHours(Number(event.target.value))} /><span>12h</span></div></div><div className="route-preview"><div className="route-line"><i /><i /><i /><i /></div><p className="eyebrow">YOUR AURAL ROUTE</p><h2>{travel} in {hours} acts.</h2><p>{loading ? 'Building your route…' : destination ? `Real Audius tracks for ${destination}.` : 'Enter a destination to generate a real playlist.'}</p><div className="energy-chart"><i /><i /><i /><i /><i /><i /><i /><i /></div><button className="queue-play" onClick={generate}><Play size={16} fill="currentColor" /> Generate playlist</button></div></section>{tracks.length > 0 && <section className="section-block"><Heading title="Your generated route" /><div className="track-list">{tracks.map((song, index) => <TrackRow key={song.id} song={song} index={index} onOpen={() => undefined} onPlay={() => onPlay(song)} />)}</div></section>}</>
+  const [title, setTitle] = useState('')
+  const [message, setMessage] = useState<string | null>(null)
+  const generate = () => { if (!destination.trim()) return setMessage('Enter a destination first.'); setLoading(true); setMessage(null); getTravelPlaylist(destination, travel, hours, travel).then((playlist) => { setTracks(playlist.tracks); setTitle(playlist.title) }).catch((error: unknown) => setMessage(error instanceof Error ? error.message : 'Unable to build this route.')).finally(() => setLoading(false)) }
+  const save = async () => {
+    if (!tracks.length || !title) return
+    setLoading(true)
+    try {
+      const { playlist } = await createPlaylist({ title, description: `${travel} to ${destination} · ${hours} hours`, source: 'TRAVEL' })
+      await Promise.all(tracks.map((song) => addTrackToPlaylist(playlist.id, song)))
+      setMessage('Travel playlist saved to your library.')
+    } catch (error) { setMessage(error instanceof Error ? error.message : 'Unable to save this playlist.') } finally { setLoading(false) }
+  }
+  return <><div className="page-intro compact-intro"><p className="eyebrow">SCORE THE JOURNEY</p><h1>Travel playlists<br />that <em>move with you.</em></h1><p>Match the length, landscape, stops and energy curve of wherever you’re going.</p></div><div className="search-hero"><Map size={20} /><input value={destination} onChange={(event) => setDestination(event.target.value)} placeholder="Enter your destination" /><button onClick={generate}><ArrowUpRight size={18} /></button></div><section className="travel-builder"><div className="travel-options"><span className="eyebrow">WHAT’S THE TRIP?</span><div>{options.map((option) => <button className={travel === option ? 'active' : ''} onClick={() => setTravel(option)} key={option}>{option === 'Flight' ? '✈' : option === 'Train' ? '🚆' : option === 'Camping' ? '⛺' : option === 'Beach' ? '☀' : option === 'Mountains' ? '⛰' : option === 'Night Drive' ? '🌙' : '🚗'} {option}</button>)}</div><span className="eyebrow duration-label">HOW LONG?</span><div className="duration"><strong>{hours}h</strong><input type="range" min="1" max="12" value={hours} onChange={(event) => setHours(Number(event.target.value))} /><span>12h</span></div></div><div className="route-preview"><div className="route-line"><i /><i /><i /><i /></div><p className="eyebrow">YOUR AURAL ROUTE</p><h2>{travel} in {hours} acts.</h2><p>{loading ? 'Building your route…' : destination ? `Real Audius tracks for ${destination}.` : 'Enter a destination to generate a real playlist.'}</p><div className="energy-chart"><i /><i /><i /><i /><i /><i /><i /><i /></div><button className="queue-play" onClick={generate}><Play size={16} fill="currentColor" /> Generate playlist</button></div></section>{message && <div className="empty-state"><p>{message}</p></div>}{tracks.length > 0 && <section className="section-block"><Heading title={title || 'Your generated route'} action={<button className="text-button" onClick={save} disabled={loading}>Save to library <Heart size={14} /></button>} /><div className="track-list">{tracks.map((song, index) => <TrackRow key={song.id} song={song} index={index} onOpen={() => undefined} onPlay={() => onPlay(song)} />)}</div></section>}</>
 }
 
 function ArtistView({ onPlay }: { onPlay: (song: Song) => void }) {
-  return <><div className="page-intro compact-intro"><p className="eyebrow">FOLLOW THE RISE</p><h1>Artist <em>tracker</em></h1><p>Spot the next chapter early — new releases, milestones, shows and the quiet rise before everyone knows.</p></div><section className="artist-feature"><div className="artist-portrait"><div className="portrait-glow" /><span>LV</span><p>LIVE FROM<br />LONDON</p></div><div className="artist-copy"><span className="eyebrow">ON YOUR RADAR</span><h2>Luna Vale</h2><p>Dream-pop with a cinematic pulse. Her first headline show is eight days away.</p><div className="artist-metrics"><span><b>+38%</b> listener growth</span><span><b>421k</b> monthly listeners</span><span><b>08</b> days to show</span></div><button className="queue-play" onClick={() => onPlay(songs[0])}><Play size={16} fill="currentColor" /> Play latest release</button></div><div className="growth-graph"><span>LISTENER GROWTH</span><svg viewBox="0 0 280 150" role="img" aria-label="Growth chart"><path d="M0 135 C33 120 44 128 72 103 S121 119 145 73 S185 72 207 46 S254 48 280 10" /><path className="area" d="M0 135 C33 120 44 128 72 103 S121 119 145 73 S185 72 207 46 S254 48 280 10 V150 H0Z" /></svg><div><b>JAN</b><b>MAR</b><b>MAY</b><b>JUL</b></div></div></section><section className="artist-events"><Heading title="Next on their timeline" /><div><article><span>14 AUG</span><p><b>“Afterimage” live session</b><small>New video premiere</small></p><i>01</i></article><article><span>17 AUG</span><p><b>Heaven at The Social</b><small>London, UK • Tickets still available</small></p><i>02</i></article><article><span>28 AUG</span><p><b>New constellation hinted</b><small>Studio post detected</small></p><i>03</i></article></div></section></>
+  const [artists, setArtists] = useState<Array<{ externalArtistId: string; name: string; handle?: string | null; imageUrl?: string | null }>>([])
+  const [selected, setSelected] = useState<string | null>(null)
+  const [artistTracks, setArtistTracks] = useState<Song[]>([])
+  const [status, setStatus] = useState('loading')
+  useEffect(() => { getTrackedArtists().then(({ artists }) => { setArtists(artists); setSelected(artists[0]?.externalArtistId ?? null); setStatus('ready') }).catch(() => setStatus('error')) }, [])
+  useEffect(() => { if (!selected) return; setStatus('loading tracks'); getArtist(selected).then(({ tracks }) => { setArtistTracks(tracks); setStatus('ready') }).catch(() => setStatus('error')) }, [selected])
+  const unfollow = async (id: string) => { await untrackArtist(id); setArtists((current) => current.filter((artist) => artist.externalArtistId !== id)); setSelected((current) => current === id ? null : current) }
+  return <><div className="page-intro compact-intro"><p className="eyebrow">FOLLOW THE RISE</p><h1>Artist <em>tracker</em></h1><p>Track artists you discover and listen to their latest Audius releases here.</p></div>{status === 'error' ? <div className="empty-state"><h3>Artist tracking is unavailable right now.</h3></div> : !artists.length && status !== 'loading' ? <div className="empty-state"><h3>No artists tracked yet.</h3><p>Open a live track, then use its artist details in a future update to build your radar.</p></div> : <><section className="artist-events"><Heading title="Artists on your radar" /><div>{artists.map((artist, index) => <article key={artist.externalArtistId}><span>0{index + 1}</span><p><b>{artist.name}</b><small>{artist.handle ? `@${artist.handle}` : 'Audius artist'}</small></p><button className="text-button" onClick={() => setSelected(artist.externalArtistId)}>View</button><button className="text-button" onClick={() => void unfollow(artist.externalArtistId)}>Unfollow</button></article>)}</div></section>{selected && <section className="section-block"><Heading title="Latest releases" />{status === 'loading tracks' ? <div className="empty-state"><h3>Loading releases…</h3></div> : <div className="track-list">{artistTracks.map((song, index) => <TrackRow key={song.id} song={song} index={index} onOpen={() => undefined} onPlay={() => onPlay(song)} />)}</div>}</section>}</>}</>
 }
 
 function SettingsView() {
@@ -499,10 +596,16 @@ function SettingsView() {
 
 function SettingRow({ label, info, enabled, onChange }: { label: string; info: string; enabled: boolean; onChange?: () => void }) { return <div className="setting-row"><div><b>{label}</b><p>{info}</p></div><button onClick={onChange} className={enabled ? 'switch on' : 'switch'} aria-label={`Toggle ${label}`}><i /></button></div> }
 
-function SongView({ song, onBack, onPlay }: { song: Song; onBack: () => void; onPlay: () => void }) {
-  return <><button className="back-button" onClick={onBack}><ChevronRight size={17} /> Back to home</button><section className="song-hero"><Artwork song={song} /><div><p className="eyebrow">SONG STORY <span>•</span> AURAL EXPLAIN</p><h1>{song.title}</h1><p className="song-artist">{song.artist} <span>•</span> {song.album} <span>•</span> 2026</p><div className="song-actions"><GradientButton onClick={onPlay}><Play size={17} fill="currentColor" /> Play song</GradientButton><button className="round-outline"><Heart size={18} /></button><button className="round-outline"><MoreHorizontal size={18} /></button></div><div className="song-metrics"><span><b>102</b> BPM</span><span><b>74%</b> energy</span><span><b>Dream pop</b> mood</span></div></div></section><section className="song-details"><article className="lyrics-panel"><div className="panel-title"><span><Sparkles size={16} /> LYRICS, UNPACKED</span><button>Full lyrics <ArrowUpRight size={14} /></button></div><p>“I kept a little light on / <mark>for the version of me</mark> <br />that didn’t know where to go.”</p><div className="explain"><span>✦</span><div><b>What this line means</b><p>Nova reads this as a gentle promise to your former self — the song’s central image turns loneliness into an act of care.</p></div></div></article><article className="story-panel"><p className="eyebrow">BEHIND THE FREQUENCY</p><h2>A song about leaving<br />the door open to yourself.</h2><p>Luna wrote Glass Horizon after a winter spent moving between cities. The production keeps the vocal near, but lets the instruments feel miles away.</p><button>Read the full story <ChevronRight size={15} /></button></article></section></>
+function SongView({ song, onBack, onPlay, onSave, onTrackArtist }: { song: Song; onBack: () => void; onPlay: () => void; onSave: () => void; onTrackArtist: () => void }) {
+  return <><button className="back-button" onClick={onBack}><ChevronRight size={17} /> Back to home</button><section className="song-hero"><Artwork song={song} /><div><p className="eyebrow">SONG STORY <span>•</span> AURAL EXPLAIN</p><h1>{song.title}</h1><p className="song-artist">{song.artist} <span>•</span> {song.album} <span>•</span> 2026</p><div className="song-actions"><GradientButton onClick={onPlay}><Play size={17} fill="currentColor" /> Play song</GradientButton><button className="round-outline" onClick={onSave} aria-label={`Save ${song.title}`}><Heart size={18} /></button>{song.artistId && <button className="round-outline" onClick={onTrackArtist} aria-label={`Track ${song.artist}`}><Star size={18} /></button>}</div><div className="song-metrics"><span><b>102</b> BPM</span><span><b>74%</b> energy</span><span><b>Dream pop</b> mood</span></div></div></section><section className="song-details"><article className="lyrics-panel"><div className="panel-title"><span><Sparkles size={16} /> LYRICS, UNPACKED</span><button>Full lyrics <ArrowUpRight size={14} /></button></div><p>“I kept a little light on / <mark>for the version of me</mark> <br />that didn’t know where to go.”</p><div className="explain"><span>✦</span><div><b>What this line means</b><p>Nova reads this as a gentle promise to your former self — the song’s central image turns loneliness into an act of care.</p></div></div></article><article className="story-panel"><p className="eyebrow">BEHIND THE FREQUENCY</p><h2>A song about leaving<br />the door open to yourself.</h2><p>Luna wrote Glass Horizon after a winter spent moving between cities. The production keeps the vocal near, but lets the instruments feel miles away.</p><button>Read the full story <ChevronRight size={15} /></button></article></section></>
 }
 
-function ProfileView({ onPage }: { onPage: (page: Page) => void }) { return <><section className="profile-hero"><div className="avatar avatar-large">SK</div><div><p className="eyebrow">LISTENER PROFILE</p><h1>Sahas <span>✦</span></h1><p>Following wherever the signal gets interesting.</p></div><button onClick={() => onPage('Settings')}><Settings size={17} /> Edit profile</button></section><section className="profile-stats"><div><b>12,842</b><span>minutes this month</span></div><div><b>86</b><span>countries explored</span></div><div><b>19</b><span>moods understood</span></div><div><b>42</b><span>artists tracked</span></div></section><section className="profile-grid"><article><p className="eyebrow">YOUR LISTENING HEATMAP</p><h2>Most alive after midnight.</h2><div className="heatmap">{Array.from({ length: 56 }, (_, index) => <i key={index} style={{ opacity: ((index * 7) % 11) / 12 + .15 }} />)}</div><p className="heatmap-key">LOW <span /> HIGH</p></article><article className="achievements"><p className="eyebrow">LATEST ACHIEVEMENT</p><span>✦</span><h2>World listener</h2><p>You listened to artists from 12 new countries this month.</p><button onClick={() => onPage('Music Globe')}>Keep exploring <ArrowUpRight size={14} /></button></article></section></> }
+function ProfileView({ onPage, onSignOut }: { onPage: (page: Page) => void; onSignOut: () => void }) {
+  const [profile, setProfile] = useState<ProfileData | null>(null)
+  useEffect(() => { getProfile().then(setProfile).catch(() => setProfile(null)) }, [])
+  const name = profile?.user?.displayName ?? 'Listener'
+  const stats = profile?.stats
+  return <><section className="profile-hero"><div className="avatar avatar-large">{name.slice(0, 2).toUpperCase()}</div><div><p className="eyebrow">LISTENER PROFILE</p><h1>{name} <span>✦</span></h1><p>{profile?.user?.email ?? 'Following wherever the signal gets interesting.'}</p></div><button onClick={onSignOut}><Settings size={17} /> Sign out</button></section><section className="profile-stats"><div><b>{stats?.history ?? '—'}</b><span>tracks in history</span></div><div><b>{stats?.favorites ?? '—'}</b><span>liked songs</span></div><div><b>{stats?.playlists ?? '—'}</b><span>playlists made</span></div><div><b>{stats?.artists ?? '—'}</b><span>artists tracked</span></div></section><section className="profile-grid"><article><p className="eyebrow">YOUR LISTENING HEATMAP</p><h2>Most alive after midnight.</h2><div className="heatmap">{Array.from({ length: 56 }, (_, index) => <i key={index} style={{ opacity: ((index * 7) % 11) / 12 + .15 }} />)}</div><p className="heatmap-key">LOW <span /> HIGH</p></article><article className="achievements"><p className="eyebrow">YOUR LIBRARY</p><span>✦</span><h2>Keep discovering</h2><p>Every saved track helps make AURAL feel more like you.</p><button onClick={() => onPage('Library')}>Open library <ArrowUpRight size={14} /></button></article></section></>
+}
 
 export default App

@@ -46,7 +46,7 @@ export type AuralTrack = {
   permalink: string | null
   streamUrl: string
   playCount: number
-  provider: 'audius'
+  provider: 'audius' | 'itunes'
 }
 
 export type AuralArtist = {
@@ -56,7 +56,7 @@ export type AuralArtist = {
   imageUrl: string | null
   followerCount: number | null
   trackCount: number | null
-  provider: 'audius'
+  provider: 'audius' | 'itunes'
 }
 
 function getArtwork(
@@ -148,6 +148,30 @@ export async function searchAudiusTracks(
   return response.data.data.map(
     normalizeTrack,
   )
+}
+
+export async function searchAudiusArtists(query: string, limit = 10): Promise<AuralArtist[]> {
+  const cleaned = query.trim()
+  if (!cleaned) return []
+  const response = await axios.get<AudiusResponse<Array<AudiusUser & { follower_count?: number; track_count?: number }>>>(
+    `${AUDIUS_API_URL}/users/search`,
+    { params: { query: cleaned, limit: Math.min(Math.max(limit, 1), 25) }, timeout: 10000 },
+  )
+  return (response.data.data ?? [])
+    .filter((artist) => artist.id && artist.name)
+    .map((artist) => ({
+      id: artist.id as string,
+      name: artist.name as string,
+      handle: artist.handle ?? null,
+      imageUrl:
+        artist.profile_picture?._1000x1000 ??
+        artist.profile_picture?._480x480 ??
+        artist.profile_picture?._150x150 ??
+        null,
+      followerCount: artist.follower_count ?? null,
+      trackCount: artist.track_count ?? null,
+      provider: 'audius' as const,
+    }))
 }
 
 export async function getAudiusArtist(

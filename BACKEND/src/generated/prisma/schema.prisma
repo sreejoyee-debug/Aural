@@ -42,6 +42,8 @@ model Track {
   album           String?
   artworkUrl      String?
   durationSeconds Int
+  streamUrl       String?
+  genre           String?
   artistId        String           @db.Uuid
   audioFeatures   Json?
   createdAt       DateTime         @default(now())

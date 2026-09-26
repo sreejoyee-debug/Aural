@@ -267,6 +267,52 @@ http://localhost:3000
 
 ---
 
+# ☁️ Production deployment
+
+The app is split intentionally: the Vite frontend deploys to **Vercel**, the Express API deploys to **Render**, and the existing **Supabase** project remains the Postgres database and authentication provider.
+
+## 1. Prepare Supabase
+
+Use the existing Supabase project. In **Project Connect**, copy the project URL and a publishable key. In **Database → Connect**, copy the pooled Postgres connection string for `DATABASE_URL`.
+
+If the database schema has not been applied yet, run this once from `BACKEND` with the production `DATABASE_URL` configured:
+
+```bash
+npm run db:push
+```
+
+Do not add a Supabase secret/service-role key to Vercel or the browser. The app only uses the publishable key for user authentication; the API uses Prisma and the private database URL.
+
+## 2. Deploy the API on Render
+
+Create a **Blueprint** from this repository. Render reads [`render.yaml`](render.yaml) and creates the `aural-api` web service. Set these Render environment variables:
+
+```text
+CLIENT_ORIGIN=https://your-vercel-domain.vercel.app
+DATABASE_URL=your-supabase-pooled-postgres-url
+SUPABASE_URL=https://your-project.supabase.co
+SUPABASE_PUBLISHABLE_KEY=sb_publishable_...
+OPENWEATHER_API_KEY=...              # optional; enables weather mixes
+```
+
+After it deploys, verify `https://your-render-service.onrender.com/health` returns `{ "success": true }`. The API URL you will use in Vercel is `https://your-render-service.onrender.com/api`.
+
+## 3. Deploy the frontend on Vercel
+
+Import the same Git repository in Vercel and set the project **Root Directory** to `FRONTEND`. Vercel uses [`FRONTEND/vercel.json`](FRONTEND/vercel.json). Add these production environment variables before deploying:
+
+```text
+VITE_API_URL=https://your-render-service.onrender.com/api
+VITE_SUPABASE_URL=https://your-project.supabase.co
+VITE_SUPABASE_PUBLISHABLE_KEY=sb_publishable_...
+```
+
+When Vercel assigns the final domain, update Render's `CLIENT_ORIGIN` to that exact origin (without a trailing slash) and redeploy the API. For Supabase Google sign-in, add the Vercel URL to **Authentication → URL Configuration → Redirect URLs** as well.
+
+> A database password was previously present in `BACKEND/.env.example`. It has been replaced with a placeholder; rotate that Supabase database password before deploying if it was ever committed or shared.
+
+---
+
 # 📸 Experience Aural
 
 Aural is designed with a strong focus on:

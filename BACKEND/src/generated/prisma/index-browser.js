@@ -146,6 +146,8 @@ exports.Prisma.TrackScalarFieldEnum = {
   album: 'album',
   artworkUrl: 'artworkUrl',
   durationSeconds: 'durationSeconds',
+  streamUrl: 'streamUrl',
+  genre: 'genre',
   artistId: 'artistId',
   audioFeatures: 'audioFeatures',
   createdAt: 'createdAt'

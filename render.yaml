@@ -1,0 +1,23 @@
+services:
+  - type: web
+    runtime: node
+    name: aural-api
+    rootDir: BACKEND
+    buildCommand: npm ci && npm run db:generate
+    startCommand: npm start
+    healthCheckPath: /health
+    envVars:
+      - key: NODE_ENV
+        value: production
+      - key: NODE_VERSION
+        value: 22
+      - key: CLIENT_ORIGIN
+        sync: false
+      - key: DATABASE_URL
+        sync: false
+      - key: SUPABASE_URL
+        sync: false
+      - key: SUPABASE_PUBLISHABLE_KEY
+        sync: false
+      - key: OPENWEATHER_API_KEY
+        sync: false

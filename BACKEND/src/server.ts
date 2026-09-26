@@ -178,12 +178,21 @@ app.get('/api/music/artist/:id', async (request, response) => {
   } catch { return response.status(404).json({ success: false, error: 'Artist not found.' }) }
 })
 
+const rouletteRoutes = [
+  { query: 'afrobeats', label: 'Afrobeats · Lagos · high energy' },
+  { query: 'city pop', label: 'City pop · Tokyo · neon nostalgia' },
+  { query: 'bossa nova', label: 'Bossa nova · Brazil · sunset calm' },
+  { query: 'indie', label: 'Indie · UK · late-night drive' },
+  { query: 'ambient', label: 'Ambient · global · deep focus' },
+]
+
 app.get('/api/music/roulette', async (_request, response) => {
   try {
-    const tracks = await getTrendingAudiusTracks(50)
+    const route = rouletteRoutes[Math.floor(Math.random() * rouletteRoutes.length)]
+    const tracks = await searchAudiusTracks(route.query, 50)
     const track = tracks[Math.floor(Math.random() * tracks.length)]
     if (!track) return response.status(404).json({ success: false, error: 'No tracks are available right now.' })
-    return response.json({ success: true, track })
+    return response.json({ success: true, track, route: route.label })
   } catch { return response.status(502).json({ success: false, error: 'Unable to spin Roulette right now.' }) }
 })
 
