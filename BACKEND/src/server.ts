@@ -17,8 +17,18 @@ const app = express()
 const prisma = new PrismaClient()
 const port = Number(process.env.PORT ?? 4000)
 const musicLimit = 20
+const allowedOrigins = (process.env.CLIENT_ORIGIN ?? 'http://localhost:5173')
+  .split(',')
+  .map((origin) => origin.trim())
+  .filter(Boolean)
 
-app.use(cors({ origin: process.env.CLIENT_ORIGIN ?? 'http://localhost:5173' }))
+app.use(cors({
+  origin(origin, callback) {
+    // Requests without Origin include health checks and server-to-server calls.
+    if (!origin || allowedOrigins.includes(origin)) return callback(null, true)
+    return callback(new Error('Origin is not allowed by CORS.'))
+  },
+}))
 app.use(express.json({ limit: '100kb' }))
 
 type Recommendation = AuralTrack & { reason: string; energy: number }

@@ -172,7 +172,14 @@ function App() {
     const controller = new AbortController()
     getTrendingTracks(controller.signal)
       .then((tracks) => { setHomeTracks(tracks); setSelectedSong((current) => current ?? tracks[0] ?? null); setHomeStatus('ready') })
-      .catch(() => setHomeStatus('error'))
+      .catch((error: unknown) => {
+        if (error instanceof DOMException && error.name === 'AbortError') return
+        // Keep the core listening experience useful even if both the optional
+        // API and public discovery provider are temporarily unavailable.
+        setHomeTracks(songs)
+        setSelectedSong((current) => current ?? songs[0])
+        setHomeStatus('ready')
+      })
     return () => controller.abort()
   }, [])
 
